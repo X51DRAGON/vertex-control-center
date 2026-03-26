@@ -206,6 +206,7 @@ function HermesSetup({ onClose, onComplete }: { onClose: () => void; onComplete:
   const [hermesStatus, setHermesStatus] = useState<any>(null)
   const [providerKey, setProviderKey] = useState('')
   const [providerType, setProviderType] = useState<'anthropic' | 'openai' | 'openai_oauth' | 'openrouter' | 'nous' | 'google' | 'xai'>('anthropic')
+  const [selectedModel, setSelectedModel] = useState('')
   const [providerSaved, setProviderSaved] = useState(false)
   const [soulContent, setSoulContent] = useState('')
 
@@ -338,19 +339,26 @@ function HermesSetup({ onClose, onComplete }: { onClose: () => void; onComplete:
             <p className="text-xs text-muted-foreground">Hermes needs an API key to talk to an LLM. Choose your provider:</p>
           </div>
 
+          {(() => {
+            const PROVIDERS = [
+              { id: 'anthropic', label: 'Anthropic', hint: 'Claude models', env: 'ANTHROPIC_API_KEY', hermesProvider: 'anthropic', models: ['claude-sonnet-4-6', 'claude-opus-4-6', 'claude-haiku-4-5'] },
+              { id: 'openai', label: 'OpenAI', hint: 'GPT / o-series', env: 'OPENAI_API_KEY', hermesProvider: 'openai', models: ['gpt-4.1', 'gpt-4.1-mini', 'o3', 'o4-mini'] },
+              { id: 'openai_oauth', label: 'OpenAI OAuth', hint: 'Login via browser', env: '', hermesProvider: 'openai', models: ['gpt-4.1', 'gpt-4.1-mini', 'o3'] },
+              { id: 'openrouter', label: 'OpenRouter', hint: '200+ models', env: 'OPENROUTER_API_KEY', hermesProvider: 'openrouter', models: ['anthropic/claude-sonnet-4-6', 'openai/gpt-4.1', 'google/gemini-2.5-pro'] },
+              { id: 'nous', label: 'Nous Portal', hint: 'Free tier', env: 'NOUS_API_KEY', hermesProvider: 'nous', models: ['hermes-3-llama-3.1-70b', 'hermes-3-llama-3.1-8b'] },
+              { id: 'google', label: 'Google AI', hint: 'Gemini models', env: 'GOOGLE_API_KEY', hermesProvider: 'google', models: ['gemini-2.5-pro', 'gemini-2.5-flash'] },
+            ] as const
+            const currentProvider = PROVIDERS.find(p => p.id === providerType)
+            const providerModels = currentProvider?.models || []
+            const hermesProviderName = currentProvider?.hermesProvider || 'anthropic'
+
+            return (<>
           <div className="grid grid-cols-3 gap-2">
-            {([
-              { id: 'anthropic', label: 'Anthropic', hint: 'Claude models', env: 'ANTHROPIC_API_KEY' },
-              { id: 'openai', label: 'OpenAI', hint: 'GPT / o-series', env: 'OPENAI_API_KEY' },
-              { id: 'openai_oauth', label: 'OpenAI OAuth', hint: 'Login via browser', env: '' },
-              { id: 'openrouter', label: 'OpenRouter', hint: '200+ models', env: 'OPENROUTER_API_KEY' },
-              { id: 'nous', label: 'Nous Portal', hint: 'Free tier', env: 'NOUS_API_KEY' },
-              { id: 'google', label: 'Google AI', hint: 'Gemini models', env: 'GOOGLE_API_KEY' },
-            ] as const).map((p) => (
+            {PROVIDERS.map((p) => (
               <button
                 key={p.id}
                 type="button"
-                onClick={() => setProviderType(p.id)}
+                onClick={() => { setProviderType(p.id); setSelectedModel(p.models[0] || '') }}
                 className={`p-2.5 rounded-lg border text-left text-xs transition-colors ${
                   providerType === p.id
                     ? 'border-primary/40 bg-primary/5 text-foreground'
@@ -363,50 +371,47 @@ function HermesSetup({ onClose, onComplete }: { onClose: () => void; onComplete:
             ))}
           </div>
 
-          {providerType === 'openai_oauth' ? (
-            <div className="space-y-3">
-              <div className="p-3 rounded-lg border border-border/20 bg-secondary/10 text-xs space-y-2">
-                <p className="font-medium text-foreground/80">Configure OpenAI</p>
-                <div className="space-y-2">
-                  <CopyableCommand command="hermes config set model.provider openai" label="Set provider" runnable />
-                  <CopyableCommand command="hermes config set model.default gpt-4.1" label="Set model" runnable />
-                </div>
-              </div>
-              <div>
-                <label className="text-xs text-muted-foreground block mb-1">
-                  OpenAI API Key (optional — or use OAuth in an interactive terminal)
-                </label>
-                <input
-                  type="password"
-                  value={providerKey}
-                  onChange={(e) => setProviderKey(e.target.value)}
-                  placeholder="sk-..."
-                  className="w-full h-8 rounded border border-border/40 bg-surface-1 px-2.5 text-xs text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary/30 font-mono"
-                />
-              </div>
+          {/* Dynamic provider config */}
+          <div className="p-3 rounded-lg border border-border/20 bg-secondary/10 text-xs space-y-2">
+            <div className="space-y-2">
+              <CopyableCommand command={`hermes config set model.provider ${hermesProviderName}`} label="Set provider" runnable />
             </div>
-          ) : (
-            <div>
-              <label className="text-xs text-muted-foreground block mb-1">
-                API Key
-              </label>
-              <input
-                type="password"
-                value={providerKey}
-                onChange={(e) => setProviderKey(e.target.value)}
-                placeholder={`Enter your ${
-                  providerType === 'nous' ? 'Nous Portal' :
-                  providerType === 'openrouter' ? 'OpenRouter' :
-                  providerType === 'google' ? 'Google AI' :
-                  providerType === 'anthropic' ? 'Anthropic' : 'OpenAI'
-                } API key...`}
-                className="w-full h-8 rounded border border-border/40 bg-surface-1 px-2.5 text-xs text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary/30 font-mono"
-              />
-              <p className="text-[10px] text-muted-foreground/40 mt-1">
-                Saved to ~/.hermes/.env — never sent to Mission Control
-              </p>
+            {/* Model selector */}
+            <div className="flex items-center gap-2 mt-2">
+              <label className="text-xs text-muted-foreground shrink-0">Model:</label>
+              <select
+                value={selectedModel}
+                onChange={(e) => setSelectedModel(e.target.value)}
+                className="flex-1 h-7 rounded border border-border/40 bg-card px-2 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary/30 font-mono"
+              >
+                {providerModels.map((m) => (
+                  <option key={m} value={m}>{m}</option>
+                ))}
+              </select>
             </div>
-          )}
+            {selectedModel && (
+              <CopyableCommand command={`hermes config set model.default ${selectedModel}`} label="Set model" runnable />
+            )}
+          </div>
+
+          {/* API Key input */}
+          <div>
+            <label className="text-xs text-muted-foreground block mb-1">
+              {currentProvider?.label} API Key{providerType === 'openai_oauth' ? ' (optional)' : ''}
+            </label>
+            <input
+              type="password"
+              value={providerKey}
+              onChange={(e) => setProviderKey(e.target.value)}
+              placeholder={`Enter your ${currentProvider?.label || ''} API key...`}
+              className="w-full h-8 rounded border border-border/40 bg-surface-1 px-2.5 text-xs text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary/30 font-mono"
+            />
+            <p className="text-[10px] text-muted-foreground/40 mt-1">
+              Saved to ~/.hermes/.env — never sent to Mission Control
+            </p>
+          </div>
+          </>)
+          })()}
 
           {providerSaved && (
             <div className="p-2.5 rounded-lg border border-green-500/20 bg-green-500/5 text-xs text-green-400">
@@ -419,28 +424,9 @@ function HermesSetup({ onClose, onComplete }: { onClose: () => void; onComplete:
           <div className="flex justify-end gap-2">
             <Button variant="ghost" size="sm" onClick={() => setStep('hook')}>Back</Button>
             <Button variant="ghost" size="sm" onClick={() => setStep('identity')}>Skip</Button>
-            {providerType === 'openai_oauth' ? (
-              <Button size="sm" onClick={async () => {
-                if (providerKey.trim()) {
-                  setRunning(true)
-                  try {
-                    await fetch('/api/hermes', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ action: 'set-env', key: 'OPENAI_API_KEY', value: providerKey }),
-                    })
-                    setProviderSaved(true)
-                  } catch { /* ignore */ }
-                  setRunning(false)
-                }
-                setStep('identity')
-              }}>
-                {providerKey.trim() ? 'Save & Continue' : 'Continue'}
-              </Button>
-            ) : (
             <Button
               size="sm"
-              disabled={!providerKey.trim() || running}
+              disabled={running}
               onClick={async () => {
                 setRunning(true)
                 setError(null)
@@ -448,22 +434,25 @@ function HermesSetup({ onClose, onComplete }: { onClose: () => void; onComplete:
                   const envMap: Record<string, string> = {
                     anthropic: 'ANTHROPIC_API_KEY',
                     openai: 'OPENAI_API_KEY',
+                    openai_oauth: 'OPENAI_API_KEY',
                     openrouter: 'OPENROUTER_API_KEY',
                     nous: 'NOUS_API_KEY',
                     google: 'GOOGLE_API_KEY',
                   }
-                  const res = await fetch('/api/hermes', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'set-env', key: envMap[providerType], value: providerKey }),
-                  })
-                  if (res.ok) {
-                    setProviderSaved(true)
-                    setTimeout(() => setStep('identity'), 800)
-                  } else {
-                    const data = await res.json().catch(() => ({}))
-                    throw new Error(data.error || 'Failed to save')
+                  if (providerKey.trim()) {
+                    const res = await fetch('/api/hermes', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ action: 'set-env', key: envMap[providerType], value: providerKey }),
+                    })
+                    if (res.ok) {
+                      setProviderSaved(true)
+                    } else {
+                      const data = await res.json().catch(() => ({}))
+                      throw new Error(data.error || 'Failed to save')
+                    }
                   }
+                  setStep('identity')
                 } catch (err) {
                   setError(err instanceof Error ? err.message : 'Failed to save provider key')
                 } finally {
@@ -471,9 +460,8 @@ function HermesSetup({ onClose, onComplete }: { onClose: () => void; onComplete:
                 }
               }}
             >
-              {running ? 'Saving...' : 'Save & Continue'}
+              {running ? 'Saving...' : providerKey.trim() ? 'Save & Continue' : 'Continue'}
             </Button>
-            )}
           </div>
         </div>
       )}

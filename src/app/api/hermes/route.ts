@@ -200,12 +200,20 @@ export async function POST(request: NextRequest) {
             } as Record<string, string>,
           })
 
+          const autoInputDelays = [250, 900, 1800]
+          autoInputDelays.forEach((delayMs) => {
+            setTimeout(() => {
+              if (done) return
+              try { pty.write('\r') } catch { /* ignore */ }
+            }, delayMs)
+          })
+
           const timeout = setTimeout(() => {
             if (done) return
             done = true
             try { pty.kill() } catch { /* ignore */ }
             resolve({ code: 124, output: output.trim() })
-          }, 90_000)
+          }, 45_000)
 
           pty.onData((data: string) => {
             output += data

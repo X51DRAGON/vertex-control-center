@@ -470,9 +470,9 @@ function ModeBadge({
 
   if (isLocal) {
     return (
-      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md text-2xs bg-void-cyan/10 border border-void-cyan/25">
-        <span className="w-1.5 h-1.5 rounded-full bg-void-cyan" />
-        <span className="font-medium text-void-cyan">{th('local')}</span>
+      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md text-2xs bg-void-purple/10 border border-void-purple/25">
+        <span className="w-1.5 h-1.5 rounded-full bg-void-purple" />
+        <span className="font-medium text-void-purple">{th('local')}</span>
       </div>
     )
   }

@@ -57,9 +57,9 @@ function LoaderDots({ size = 'md' }: { size?: 'sm' | 'md' }) {
   const dotSize = size === 'sm' ? 'w-1 h-1' : 'w-1.5 h-1.5'
   return (
     <div className="flex items-center gap-1.5">
-      <div className={`${dotSize} rounded-full bg-void-cyan animate-pulse`} style={{ animationDelay: '0ms' }} />
-      <div className={`${dotSize} rounded-full bg-void-cyan animate-pulse`} style={{ animationDelay: '200ms' }} />
-      <div className={`${dotSize} rounded-full bg-void-cyan animate-pulse`} style={{ animationDelay: '400ms' }} />
+      <div className={`${dotSize} rounded-full bg-void-purple animate-pulse`} style={{ animationDelay: '0ms' }} />
+      <div className={`${dotSize} rounded-full bg-void-purple animate-pulse`} style={{ animationDelay: '200ms' }} />
+      <div className={`${dotSize} rounded-full bg-void-purple animate-pulse`} style={{ animationDelay: '400ms' }} />
     </div>
   )
 }

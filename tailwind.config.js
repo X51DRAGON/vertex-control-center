@@ -52,7 +52,7 @@ module.exports = {
         'surface-2': 'hsl(var(--surface-2))',
         'surface-3': 'hsl(var(--surface-3))',
         // Void accent colors
-        'void-cyan': 'hsl(var(--void-cyan))',
+        'void-purple': 'hsl(var(--void-purple))',
         'void-mint': 'hsl(var(--void-mint))',
         'void-amber': 'hsl(var(--void-amber))',
         'void-violet': 'hsl(var(--void-violet))',

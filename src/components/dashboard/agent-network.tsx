@@ -79,7 +79,7 @@ function AgentNode({ data }: { data: any }) {
 
   const getStatusClasses = () => {
     switch (status) {
-      case 'active': return 'border-void-cyan glow-cyan'
+      case 'active': return 'border-void-purple glow-purple'
       case 'idle': return 'border-void-amber/50'
       case 'error': return 'border-void-crimson badge-glow-error'
       default: return 'border-border'
@@ -101,7 +101,7 @@ function AgentNode({ data }: { data: any }) {
       case 'main':
         return { label: 'LEAD', color: 'bg-void-violet/20 text-void-violet border-void-violet/30' }
       case 'subagent':
-        return { label: 'WORKER', color: 'bg-void-cyan/20 text-void-cyan border-void-cyan/30' }
+        return { label: 'WORKER', color: 'bg-void-purple/20 text-void-purple border-void-purple/30' }
       case 'cron':
         return { label: 'CRON', color: 'bg-void-amber/20 text-void-amber border-void-amber/30' }
       default:
@@ -115,7 +115,7 @@ function AgentNode({ data }: { data: any }) {
   return (
     <div className={`void-panel px-3 py-3 border-2 ${getStatusClasses()} min-w-[140px]`}>
       <div className="flex items-start justify-between">
-        <span className={`text-void-cyan ${isWorking ? 'animate-glow-pulse' : ''}`}>
+        <span className={`text-void-purple ${isWorking ? 'animate-glow-pulse' : ''}`}>
           {getTypeIcon()}
         </span>
         {isWorking && (
@@ -190,8 +190,8 @@ export function AgentNetwork({ agents, sessions }: AgentNetworkProps) {
 
     // Create edges — all agents connect to CORE, plus hierarchical edges
     const edges: Edge[] = []
-    const cyanStroke = 'hsl(var(--void-cyan))'
-    const cyanDimStroke = 'hsl(var(--void-cyan) / 0.4)'
+    const cyanStroke = 'hsl(var(--void-purple))'
+    const cyanDimStroke = 'hsl(var(--void-purple) / 0.4)'
     const amberStroke = 'hsl(var(--void-amber) / 0.5)'
 
     const mainAgents = agentList.filter(a => a.type === 'main')
@@ -263,7 +263,7 @@ export function AgentNetwork({ agents, sessions }: AgentNetworkProps) {
     return (
       <div className="void-panel h-96 flex items-center justify-center">
         <div className="text-center text-muted-foreground">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10 mx-auto mb-2 text-void-cyan/40">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10 mx-auto mb-2 text-void-purple/40">
             <circle cx="4" cy="4" r="2" />
             <circle cx="12" cy="4" r="2" />
             <circle cx="4" cy="12" r="2" />
@@ -308,7 +308,7 @@ export function AgentNetwork({ agents, sessions }: AgentNetworkProps) {
             variant={BackgroundVariant.Dots}
             gap={40}
             size={0.6}
-            color="hsl(var(--void-cyan) / 0.12)"
+            color="hsl(var(--void-purple) / 0.12)"
           />
         </ReactFlow>
       </div>

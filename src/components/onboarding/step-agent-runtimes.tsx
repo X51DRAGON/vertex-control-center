@@ -32,7 +32,7 @@ interface Props {
 
 function modeColors(isGateway: boolean) {
   return isGateway
-    ? { text: 'text-void-cyan', border: 'border-void-cyan/30', bgBtn: 'bg-void-cyan/20', hoverBg: 'hover:bg-void-cyan/30' }
+    ? { text: 'text-void-purple', border: 'border-void-purple/30', bgBtn: 'bg-void-purple/20', hoverBg: 'hover:bg-void-purple/30' }
     : { text: 'text-void-amber', border: 'border-void-amber/30', bgBtn: 'bg-void-amber/20', hoverBg: 'hover:bg-void-amber/30' }
 }
 
@@ -147,7 +147,7 @@ export function StepAgentRuntimes({ isGateway, onNext, onBack }: Props) {
         </p>
 
         {isDocker && (
-          <div className="mb-3 p-2.5 rounded-lg border border-void-cyan/20 bg-void-cyan/5 text-xs text-muted-foreground">
+          <div className="mb-3 p-2.5 rounded-lg border border-void-purple/20 bg-void-purple/5 text-xs text-muted-foreground">
             Running in Docker — install directly or use sidecar services for production.
           </div>
         )}

@@ -245,14 +245,14 @@ const ROOM_LAYOUT: MapRoom[] = [
 ]
 
 const MAP_PROPS: MapProp[] = [
-  { id: 'desk-a', x: 22, y: 30, w: 8, h: 2.8, style: 'bg-[#0f1c30]', border: 'border-void-cyan/25' },
-  { id: 'desk-b', x: 33, y: 30, w: 8, h: 2.8, style: 'bg-[#0f1c30]', border: 'border-void-cyan/25' },
-  { id: 'desk-c', x: 52, y: 30, w: 8, h: 2.8, style: 'bg-[#0f1c30]', border: 'border-void-cyan/25' },
-  { id: 'desk-d', x: 61, y: 30, w: 8, h: 2.8, style: 'bg-[#0f1c30]', border: 'border-void-cyan/25' },
-  { id: 'desk-e', x: 22, y: 58, w: 8, h: 2.8, style: 'bg-[#0f1c30]', border: 'border-void-cyan/25' },
-  { id: 'desk-f', x: 31, y: 58, w: 8, h: 2.8, style: 'bg-[#0f1c30]', border: 'border-void-cyan/25' },
-  { id: 'desk-g', x: 48, y: 58, w: 8, h: 2.8, style: 'bg-[#0f1c30]', border: 'border-void-cyan/25' },
-  { id: 'desk-h', x: 57, y: 58, w: 8, h: 2.8, style: 'bg-[#0f1c30]', border: 'border-void-cyan/25' },
+  { id: 'desk-a', x: 22, y: 30, w: 8, h: 2.8, style: 'bg-[#0f1c30]', border: 'border-void-purple/25' },
+  { id: 'desk-b', x: 33, y: 30, w: 8, h: 2.8, style: 'bg-[#0f1c30]', border: 'border-void-purple/25' },
+  { id: 'desk-c', x: 52, y: 30, w: 8, h: 2.8, style: 'bg-[#0f1c30]', border: 'border-void-purple/25' },
+  { id: 'desk-d', x: 61, y: 30, w: 8, h: 2.8, style: 'bg-[#0f1c30]', border: 'border-void-purple/25' },
+  { id: 'desk-e', x: 22, y: 58, w: 8, h: 2.8, style: 'bg-[#0f1c30]', border: 'border-void-purple/25' },
+  { id: 'desk-f', x: 31, y: 58, w: 8, h: 2.8, style: 'bg-[#0f1c30]', border: 'border-void-purple/25' },
+  { id: 'desk-g', x: 48, y: 58, w: 8, h: 2.8, style: 'bg-[#0f1c30]', border: 'border-void-purple/25' },
+  { id: 'desk-h', x: 57, y: 58, w: 8, h: 2.8, style: 'bg-[#0f1c30]', border: 'border-void-purple/25' },
   { id: 'plant-l', x: 14, y: 47, w: 3, h: 5, style: 'bg-void-mint/30', border: 'border-void-mint/20' },
   { id: 'plant-r', x: 84, y: 47, w: 3, h: 5, style: 'bg-void-mint/30', border: 'border-void-mint/20' },
   { id: 'kitchen', x: 72, y: 57, w: 12, h: 10, style: 'bg-[#0c1a1a]', border: 'border-void-mint/20' },
@@ -1551,7 +1551,7 @@ export function OfficePanel() {
 
       {visibleDisplayAgents.length === 0 ? (
         <div className="text-center py-16 text-muted-foreground">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 mx-auto mb-3 text-void-cyan/30">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 mx-auto mb-3 text-void-purple/30">
             <path d="M8 1l6 4v6l-6 4-6-4V5l6-4z" />
             <path d="M8 1v14M2 5l6 4 6-4" />
           </svg>
@@ -1563,7 +1563,7 @@ export function OfficePanel() {
           {showSidebar && (
           <div className="void-panel text-foreground p-3 h-fit">
             <div className="flex items-center justify-between mb-2">
-              <div className="text-xs font-semibold font-mono tracking-wider text-void-cyan">{t('crewHeader')}</div>
+              <div className="text-xs font-semibold font-mono tracking-wider text-void-purple">{t('crewHeader')}</div>
               <div className="text-[10px] text-muted-foreground">{t('onlineCount', { count: visibleDisplayAgents.length })}</div>
             </div>
             <div className="mb-2 flex flex-wrap gap-1.5">
@@ -1580,7 +1580,7 @@ export function OfficePanel() {
                   onClick={() => setSidebarFilter(item.key)}
                   className={`h-auto px-2 py-1 text-[10px] font-mono border ${
                     sidebarFilter === item.key
-                      ? 'bg-void-cyan/15 border-void-cyan/30 text-void-cyan'
+                      ? 'bg-void-purple/15 border-void-purple/30 text-void-purple'
                       : 'bg-secondary border-border text-muted-foreground hover:bg-muted'
                   }`}
                 >
@@ -1596,7 +1596,7 @@ export function OfficePanel() {
                   onClick={() => setLocalSessionFilter('running')}
                   className={`flex-1 h-auto px-2 py-1 text-[10px] font-mono border ${
                     localSessionFilter === 'running'
-                      ? 'bg-void-cyan/15 border-void-cyan/30 text-void-cyan'
+                      ? 'bg-void-purple/15 border-void-purple/30 text-void-purple'
                       : 'bg-secondary border-border text-muted-foreground hover:bg-muted'
                   }`}
                 >
@@ -1743,14 +1743,14 @@ export function OfficePanel() {
               </>
             )}
 
-            <div className="absolute left-[8%] top-[8%] rounded-md bg-card/80 backdrop-blur-sm border border-void-cyan/20 text-void-cyan text-xs px-2 py-1 font-mono z-30">
+            <div className="absolute left-[8%] top-[8%] rounded-md bg-card/80 backdrop-blur-sm border border-void-purple/20 text-void-purple text-xs px-2 py-1 font-mono z-30">
               {t('mainDeck')}
             </div>
             <div className="absolute right-3 top-3 z-30 flex items-center gap-1 rounded-md bg-card/80 backdrop-blur-sm border border-border text-foreground/90 px-2 py-1">
-              <Button variant="ghost" size="xs" onClick={() => setMapZoom((z) => Math.max(0.8, Number((z - 0.1).toFixed(2))))} className="h-auto px-1.5 py-0.5 text-xs hover:bg-void-cyan/10">-</Button>
+              <Button variant="ghost" size="xs" onClick={() => setMapZoom((z) => Math.max(0.8, Number((z - 0.1).toFixed(2))))} className="h-auto px-1.5 py-0.5 text-xs hover:bg-void-purple/10">-</Button>
               <span className="text-[11px] font-mono w-10 text-center">{Math.round(mapZoom * 100)}%</span>
-              <Button variant="ghost" size="xs" onClick={() => setMapZoom((z) => Math.min(2.2, Number((z + 0.1).toFixed(2))))} className="h-auto px-1.5 py-0.5 text-xs hover:bg-void-cyan/10">+</Button>
-              <Button variant="ghost" size="xs" onClick={resetMapView} className="h-auto px-1.5 py-0.5 text-[11px] hover:bg-void-cyan/10">{t('resetView')}</Button>
+              <Button variant="ghost" size="xs" onClick={() => setMapZoom((z) => Math.min(2.2, Number((z + 0.1).toFixed(2))))} className="h-auto px-1.5 py-0.5 text-xs hover:bg-void-purple/10">+</Button>
+              <Button variant="ghost" size="xs" onClick={resetMapView} className="h-auto px-1.5 py-0.5 text-[11px] hover:bg-void-purple/10">{t('resetView')}</Button>
             </div>
             <div className="absolute right-3 top-12 z-30 flex items-center gap-1 rounded-md bg-card/80 backdrop-blur-sm border border-border text-foreground/90 px-2 py-1">
               {(['dawn', 'day', 'dusk', 'night'] as TimeTheme[]).map((item) => (
@@ -1759,17 +1759,17 @@ export function OfficePanel() {
                   variant="ghost"
                   size="xs"
                   onClick={() => setTimeTheme(item)}
-                  className={`h-auto px-1.5 py-0.5 text-[10px] font-mono uppercase ${timeTheme === item ? 'bg-void-cyan/20 text-void-cyan' : 'hover:bg-void-cyan/10 text-muted-foreground'}`}
+                  className={`h-auto px-1.5 py-0.5 text-[10px] font-mono uppercase ${timeTheme === item ? 'bg-void-purple/20 text-void-purple' : 'hover:bg-void-purple/10 text-muted-foreground'}`}
                 >
                   {item}
                 </Button>
               ))}
             </div>
             <div className="absolute left-3 top-3 z-30 flex items-center gap-1 rounded-md bg-card/80 backdrop-blur-sm border border-border text-foreground/90 px-2 py-1">
-              <Button variant="ghost" size="xs" onClick={() => setShowSidebar((v) => !v)} className="h-auto px-1.5 py-0.5 text-[10px] font-mono hover:bg-void-cyan/10">{showSidebar ? t('hideCrewButton') : t('showCrewButton')}</Button>
-              <Button variant="ghost" size="xs" onClick={() => setShowMinimap((v) => !v)} className="h-auto px-1.5 py-0.5 text-[10px] font-mono hover:bg-void-cyan/10">{showMinimap ? t('hideRadarButton') : t('showRadarButton')}</Button>
-              <Button variant="ghost" size="xs" onClick={() => setShowEvents((v) => !v)} className="h-auto px-1.5 py-0.5 text-[10px] font-mono hover:bg-void-cyan/10">{showEvents ? t('hideLogButton') : t('showLogButton')}</Button>
-              <Button variant="ghost" size="xs" onClick={resetOfficeLayout} className="h-auto px-1.5 py-0.5 text-[10px] font-mono hover:bg-void-cyan/10">{t('resetLayout')}</Button>
+              <Button variant="ghost" size="xs" onClick={() => setShowSidebar((v) => !v)} className="h-auto px-1.5 py-0.5 text-[10px] font-mono hover:bg-void-purple/10">{showSidebar ? t('hideCrewButton') : t('showCrewButton')}</Button>
+              <Button variant="ghost" size="xs" onClick={() => setShowMinimap((v) => !v)} className="h-auto px-1.5 py-0.5 text-[10px] font-mono hover:bg-void-purple/10">{showMinimap ? t('hideRadarButton') : t('showRadarButton')}</Button>
+              <Button variant="ghost" size="xs" onClick={() => setShowEvents((v) => !v)} className="h-auto px-1.5 py-0.5 text-[10px] font-mono hover:bg-void-purple/10">{showEvents ? t('hideLogButton') : t('showLogButton')}</Button>
+              <Button variant="ghost" size="xs" onClick={resetOfficeLayout} className="h-auto px-1.5 py-0.5 text-[10px] font-mono hover:bg-void-purple/10">{t('resetLayout')}</Button>
             </div>
 
             <div
@@ -1780,7 +1780,7 @@ export function OfficePanel() {
                 {floorTiles.map((tile) => (
                   <div
                     key={tile.id}
-                    className="absolute border border-void-cyan/[0.06]"
+                    className="absolute border border-void-purple/[0.06]"
                     style={{
                       left: `${tile.x}%`,
                       top: `${tile.y}%`,
@@ -1796,7 +1796,7 @@ export function OfficePanel() {
               </div>
 
               {/* Corridor base */}
-              <div className="absolute left-[14%] top-[45%] w-[72%] h-[6%] border-y border-void-cyan/15 shadow-[0_0_30px_hsl(var(--void-cyan)/0.1)]" style={{ backgroundColor: themePalette.corridor }} />
+              <div className="absolute left-[14%] top-[45%] w-[72%] h-[6%] border-y border-void-purple/15 shadow-[0_0_30px_hsl(var(--void-purple)/0.1)]" style={{ backgroundColor: themePalette.corridor }} />
               <div className="absolute left-[14%] top-[47.6%] w-[72%] h-[0.7%]" style={{ backgroundColor: themePalette.corridorStripe }} />
 
               <div className="absolute inset-0 pointer-events-none z-[1]">
@@ -1819,7 +1819,7 @@ export function OfficePanel() {
               {roomLayoutState.map((room) => (
                 <div
                   key={room.id}
-                  className={`absolute border border-void-cyan/15 ${room.style} shadow-[inset_0_0_0_1px_hsl(var(--void-cyan)/0.04),0_8px_24px_rgba(0,0,0,0.3)]`}
+                  className={`absolute border border-void-purple/15 ${room.style} shadow-[inset_0_0_0_1px_hsl(var(--void-purple)/0.04),0_8px_24px_rgba(0,0,0,0.3)]`}
                   style={{
                     left: `${room.x}%`,
                     top: `${room.y}%`,
@@ -1852,7 +1852,7 @@ export function OfficePanel() {
                   }}
                 >
                   <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `${themePalette.roomTone}, linear-gradient(to bottom right, rgba(255,255,255,0.08), transparent 45%)` }} />
-                  <div className="absolute left-2 top-1 rounded bg-card/70 backdrop-blur-sm border border-void-cyan/15 text-void-cyan/80 text-[9px] px-1.5 py-0.5 font-mono uppercase tracking-wide">
+                  <div className="absolute left-2 top-1 rounded bg-card/70 backdrop-blur-sm border border-void-purple/15 text-void-purple/80 text-[9px] px-1.5 py-0.5 font-mono uppercase tracking-wide">
                     {room.label}
                   </div>
                 </div>
@@ -2031,7 +2031,7 @@ export function OfficePanel() {
 
             {showMinimap && (
             <div
-              className="absolute right-3 bottom-3 z-30 w-44 h-28 rounded-md border border-void-cyan/15 bg-card/85 backdrop-blur-sm p-1.5"
+              className="absolute right-3 bottom-3 z-30 w-44 h-28 rounded-md border border-void-purple/15 bg-card/85 backdrop-blur-sm p-1.5"
               onMouseDown={(event) => event.stopPropagation()}
               onClick={(event) => {
                 event.stopPropagation()
@@ -2042,16 +2042,16 @@ export function OfficePanel() {
                 focusMapPoint(x, y)
               }}
             >
-              <div className="text-[9px] text-void-cyan/60 font-mono uppercase tracking-wider mb-1">{t('radarLabel')}</div>
-              <div className="relative w-full h-[calc(100%-16px)] rounded-sm overflow-hidden border border-void-cyan/10 bg-background">
+              <div className="text-[9px] text-void-purple/60 font-mono uppercase tracking-wider mb-1">{t('radarLabel')}</div>
+              <div className="relative w-full h-[calc(100%-16px)] rounded-sm overflow-hidden border border-void-purple/10 bg-background">
                 {roomLayoutState.map((room) => (
                   <div
                     key={`mini-${room.id}`}
-                    className="absolute border border-void-cyan/15 bg-void-cyan/5"
+                    className="absolute border border-void-purple/15 bg-void-purple/5"
                     style={{ left: `${room.x}%`, top: `${room.y}%`, width: `${room.w}%`, height: `${room.h}%` }}
                   />
                 ))}
-                <div className="absolute left-[14%] top-[47%] w-[72%] h-[4%] bg-void-cyan/20" />
+                <div className="absolute left-[14%] top-[47%] w-[72%] h-[4%] bg-void-purple/20" />
                 {renderedWorkers.map((worker) => (
                   <Button
                     key={`mini-worker-${worker.agent.id}`}
@@ -2072,14 +2072,14 @@ export function OfficePanel() {
 
             {showEvents && (
             <div
-              className="absolute left-3 bottom-3 z-30 w-72 rounded-md border border-void-cyan/15 bg-card/88 backdrop-blur-sm p-2.5 space-y-2"
+              className="absolute left-3 bottom-3 z-30 w-72 rounded-md border border-void-purple/15 bg-card/88 backdrop-blur-sm p-2.5 space-y-2"
               onWheel={(event) => event.stopPropagation()}
             >
-              <div className="text-[10px] text-void-cyan/60 font-mono uppercase tracking-wider">{t('deckLog')}</div>
+              <div className="text-[10px] text-void-purple/60 font-mono uppercase tracking-wider">{t('deckLog')}</div>
               <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
                 <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-void-amber" />{t('legendActive')}</span>
                 <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-void-mint" />{t('legendStandby')}</span>
-                <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-void-cyan" />{t('legendOther')}</span>
+                <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-void-purple" />{t('legendOther')}</span>
               </div>
               <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1" onWheel={(event) => event.stopPropagation()}>
                 {officeEvents.length === 0 && (
@@ -2094,7 +2094,7 @@ export function OfficePanel() {
                             ? 'text-void-mint'
                             : event.severity === 'warn'
                               ? 'text-void-amber'
-                              : 'text-void-cyan'
+                              : 'text-void-purple'
                         }`}
                       >
                         {event.kind}
@@ -2106,10 +2106,10 @@ export function OfficePanel() {
                 ))}
               </div>
               {selectedHotspot && (
-                <div className="rounded border border-void-cyan/15 bg-secondary/50 p-2">
+                <div className="rounded border border-void-purple/15 bg-secondary/50 p-2">
                   <div className="flex items-center justify-between">
                     <div className="text-[11px] font-semibold text-foreground">{selectedHotspot.label}</div>
-                    <div className="text-[9px] font-mono uppercase text-void-cyan/60">{selectedHotspot.kind}</div>
+                    <div className="text-[9px] font-mono uppercase text-void-purple/60">{selectedHotspot.kind}</div>
                   </div>
                   <div className="mt-1.5 space-y-1">
                     {selectedHotspot.stats.map((line) => (

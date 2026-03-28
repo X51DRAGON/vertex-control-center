@@ -1,5 +1,5 @@
 /**
- * Design tokens for Mission Control "Void" aesthetic.
+ * Design tokens for Vertex Control Center aesthetic.
  * Server-safe — no 'use client' directive needed.
  *
  * Use the `hsl()` helper when you need inline styles (ReactFlow nodes, recharts),
@@ -21,11 +21,11 @@ export interface HSL {
 export const voidPalette = {
   background: { h: 215, s: 27, l: 4 },   // #07090C — deepest void
   card:       { h: 220, s: 30, l: 8 },    // #0F141C
-  primary:    { h: 187, s: 82, l: 53 },   // #22D3EE — cyan
+  primary:    { h: 270, s: 75, l: 60 },   // SSV purple
   secondary:  { h: 220, s: 25, l: 11 },
   muted:      { h: 220, s: 20, l: 14 },
   border:     { h: 220, s: 20, l: 14 },
-  ring:       { h: 187, s: 82, l: 53 },
+  ring:       { h: 270, s: 75, l: 60 },
 } as const satisfies Record<string, HSL>
 
 export const voidAccents = {
@@ -40,7 +40,7 @@ export const statusColors = {
   success: { h: 160, s: 60, l: 52 },  // mint
   warning: { h: 38,  s: 92, l: 50 },  // amber
   error:   { h: 0,   s: 72, l: 51 },  // crimson
-  info:    { h: 187, s: 82, l: 53 },  // cyan
+  info:    { h: 270, s: 75, l: 60 },  // purple
 } as const satisfies Record<string, HSL>
 
 export const surfaces = {

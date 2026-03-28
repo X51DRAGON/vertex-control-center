@@ -11,6 +11,8 @@ import { WidgetGrid } from './widget-grid'
 import { AmyStatusWidget } from './amy-status-widget'
 import { ActivityFeed } from './activity-feed'
 import { TaskBoard } from './task-board'
+import { ApprovalGate } from './approval-gate'
+import { NotificationHistory } from './notification-history'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -314,6 +316,31 @@ export function Dashboard() {
           </div>
           <div className="h-[400px]">
             <TaskBoard />
+          </div>
+        </section>
+      </div>
+
+      {/* Approval Gate + Notifications */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <section className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+            <span className="text-sm">🔐</span>
+            <h3 className="text-sm font-semibold text-foreground">Approval Gate</h3>
+            <span className="text-[10px] text-muted-foreground/40">Human-in-the-loop</span>
+          </div>
+          <div className="h-[320px]">
+            <ApprovalGate />
+          </div>
+        </section>
+
+        <section className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+            <span className="text-sm">🔔</span>
+            <h3 className="text-sm font-semibold text-foreground">Notifications</h3>
+            <span className="text-[10px] text-muted-foreground/40">Alerts & reports</span>
+          </div>
+          <div className="h-[320px]">
+            <NotificationHistory />
           </div>
         </section>
       </div>

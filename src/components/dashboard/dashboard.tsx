@@ -17,6 +17,7 @@ import { QuickActions } from './quick-actions'
 import { KnowledgeManager } from './knowledge-manager'
 import { CommandBar } from './command-bar'
 import { VaultSearch } from './vault-search'
+import { SystemTopology } from './system-topology'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -302,18 +303,31 @@ export function Dashboard() {
         <AmyStatusWidget />
       </section>
 
-      {/* Quick Actions */}
-      <section className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-          <span className="text-sm">🎯</span>
-          <h3 className="text-sm font-semibold text-foreground">Quick Actions</h3>
-          <span className="text-[10px] text-muted-foreground/40">One-click operations</span>
-        </div>
-        <div className="p-3">
-          <QuickActions />
-        </div>
-      </section>
+      {/* System Topology + Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <section className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+            <span className="text-sm">🗺️</span>
+            <h3 className="text-sm font-semibold text-foreground">System Topology</h3>
+            <span className="text-[10px] text-muted-foreground/40">Live architecture</span>
+          </div>
+          <div className="p-3">
+            <SystemTopology />
+          </div>
+        </section>
 
+        {/* Quick Actions */}
+        <section className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+            <span className="text-sm">🎯</span>
+            <h3 className="text-sm font-semibold text-foreground">Quick Actions</h3>
+            <span className="text-[10px] text-muted-foreground/40">One-click operations</span>
+          </div>
+          <div className="p-3">
+            <QuickActions />
+          </div>
+        </section>
+      </div>
       {/* Activity Feed + Task Board */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <section className="rounded-xl border border-border bg-card overflow-hidden">

@@ -15,6 +15,7 @@ import { ApprovalGate } from './approval-gate'
 import { NotificationHistory } from './notification-history'
 import { QuickActions } from './quick-actions'
 import { KnowledgeManager } from './knowledge-manager'
+import { CommandBar } from './command-bar'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -292,6 +293,9 @@ export function Dashboard() {
           </div>
         </div>
       </section>
+
+      {/* Command Bar — KPI Strip */}
+      <CommandBar />
 
       <section className="rounded-xl border border-border bg-card p-4">
         <AmyStatusWidget />

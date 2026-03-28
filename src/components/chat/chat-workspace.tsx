@@ -162,45 +162,106 @@ export function ChatWorkspace({ mode = 'embedded', onClose }: ChatWorkspaceProps
 
     try {
       if (isAmyChat) {
-        // Direct Ollama route — bypasses OpenClaw gateway
-        const res = await fetch('/api/amy/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            message: cleanContent,
-            conversation_id: activeConversation,
-          }),
+        // Streaming Ollama route — token-by-token response
+        replacePendingMessage(tempId, {
+          id: Date.now(),
+          conversation_id: activeConversation,
+          from_agent: 'human',
+          to_agent: 'amy',
+          content: cleanContent,
+          message_type: 'text',
+          created_at: Math.floor(Date.now() / 1000),
         })
 
-        if (res.ok) {
-          const data = await res.json()
-          // Replace pending with sent status
-          replacePendingMessage(tempId, {
-            id: Date.now(),
-            conversation_id: activeConversation,
-            from_agent: 'human',
-            to_agent: 'amy',
-            content: cleanContent,
-            message_type: 'text',
-            created_at: Math.floor(Date.now() / 1000),
+        // Create placeholder for Amy's streaming response
+        const streamMsgId = Date.now() + 1
+        addChatMessage({
+          id: streamMsgId,
+          conversation_id: activeConversation,
+          from_agent: 'amy',
+          to_agent: 'human',
+          content: '●',
+          message_type: 'text',
+          created_at: Math.floor(Date.now() / 1000),
+          pendingStatus: 'sending' as const,
+        })
+
+        try {
+          const res = await fetch('/api/amy/stream', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              message: cleanContent,
+              conversation_id: activeConversation,
+            }),
           })
 
-          // Add Amy's response
-          addChatMessage({
-            id: Date.now() + 1,
-            conversation_id: activeConversation,
-            from_agent: 'amy',
-            to_agent: 'human',
-            content: data.reply,
-            message_type: 'text',
-            created_at: Math.floor(Date.now() / 1000),
-            metadata: {
-              model: data.model,
-              knowledge_refs: data.knowledge_refs,
-            },
-          })
-        } else {
-          updatePendingMessage(tempId, { pendingStatus: 'failed' })
+          if (res.ok && res.body) {
+            const reader = res.body.getReader()
+            const decoder = new TextDecoder()
+            let accumulated = ''
+            let buffer = ''
+
+            while (true) {
+              const { done, value } = await reader.read()
+              if (done) break
+
+              buffer += decoder.decode(value, { stream: true })
+              const lines = buffer.split('\n')
+              buffer = lines.pop() || ''
+
+              for (const line of lines) {
+                if (!line.startsWith('data: ')) continue
+                try {
+                  const event = JSON.parse(line.slice(6))
+                  if (event.type === 'token') {
+                    accumulated += event.content
+                    updatePendingMessage(streamMsgId, {
+                      content: accumulated,
+                      pendingStatus: 'sending' as const,
+                    })
+                  } else if (event.type === 'done') {
+                    replacePendingMessage(streamMsgId, {
+                      id: streamMsgId,
+                      conversation_id: activeConversation,
+                      from_agent: 'amy',
+                      to_agent: 'human',
+                      content: event.full_reply || accumulated,
+                      message_type: 'text',
+                      created_at: Math.floor(Date.now() / 1000),
+                    })
+                  }
+                } catch { /* skip bad JSON */ }
+              }
+            }
+          } else {
+            // Fallback to non-streaming
+            const fallbackRes = await fetch('/api/amy/chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                message: cleanContent,
+                conversation_id: activeConversation,
+              }),
+            })
+            if (fallbackRes.ok) {
+              const data = await fallbackRes.json()
+              replacePendingMessage(streamMsgId, {
+                id: streamMsgId,
+                conversation_id: activeConversation,
+                from_agent: 'amy',
+                to_agent: 'human',
+                content: data.reply,
+                message_type: 'text',
+                created_at: Math.floor(Date.now() / 1000),
+              })
+            } else {
+              updatePendingMessage(streamMsgId, { content: 'Amy is offline. Check Ollama.', pendingStatus: 'failed' as const })
+            }
+          }
+        } catch (streamErr) {
+          log.error('Amy stream error:', streamErr)
+          updatePendingMessage(streamMsgId, { content: 'Connection error.', pendingStatus: 'failed' as const })
         }
       } else {
         // Standard OpenClaw gateway route
@@ -788,6 +849,7 @@ function ChatIndicators({ notifications }: { notifications: Array<{ id: number; 
 
 function AgentAvatar({ name, size = 'md' }: { name: string; size?: 'sm' | 'md' }) {
   const colors: Record<string, string> = {
+    amy: 'bg-purple-500/20 text-purple-400',
     coordinator: 'bg-purple-500/20 text-purple-400',
     aegis: 'bg-red-500/20 text-red-400',
     research: 'bg-green-500/20 text-green-400',
@@ -808,6 +870,7 @@ function AgentAvatar({ name, size = 'md' }: { name: string; size?: 'sm' | 'md' }
 }
 
 function getConversationStatus(agents: Array<{ name: string; status: string }>, conversationId: string): string {
+  if (conversationId === 'agent_amy') return 'AI Operations Assistant • via Ollama'
   if (conversationId.startsWith('session:')) {
     if (conversationId.includes('claude-code')) return 'Local Claude session'
     if (conversationId.includes('codex-cli')) return 'Local Codex session'

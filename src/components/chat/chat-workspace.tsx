@@ -157,28 +157,75 @@ export function ChatWorkspace({ mode = 'embedded', onClose }: ChatWorkspaceProps
     addChatMessage(optimisticMessage)
     setIsGenerating(true)
 
-    try {
-      const res = await fetch('/api/chat/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          from: 'human',
-          to,
-          content: cleanContent,
-          conversation_id: activeConversation,
-          message_type: 'text',
-          attachments,
-          forward: true,
-        }),
-      })
+    // Route Amy conversations directly through Ollama
+    const isAmyChat = to?.toLowerCase() === 'amy' || activeConversation === 'agent_amy'
 
-      if (res.ok) {
-        const data = await res.json()
-        if (data.message) {
-          replacePendingMessage(tempId, data.message)
+    try {
+      if (isAmyChat) {
+        // Direct Ollama route — bypasses OpenClaw gateway
+        const res = await fetch('/api/amy/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: cleanContent,
+            conversation_id: activeConversation,
+          }),
+        })
+
+        if (res.ok) {
+          const data = await res.json()
+          // Replace pending with sent status
+          replacePendingMessage(tempId, {
+            id: Date.now(),
+            conversation_id: activeConversation,
+            from_agent: 'human',
+            to_agent: 'amy',
+            content: cleanContent,
+            message_type: 'text',
+            created_at: Math.floor(Date.now() / 1000),
+          })
+
+          // Add Amy's response
+          addChatMessage({
+            id: Date.now() + 1,
+            conversation_id: activeConversation,
+            from_agent: 'amy',
+            to_agent: 'human',
+            content: data.reply,
+            message_type: 'text',
+            created_at: Math.floor(Date.now() / 1000),
+            metadata: {
+              model: data.model,
+              knowledge_refs: data.knowledge_refs,
+            },
+          })
+        } else {
+          updatePendingMessage(tempId, { pendingStatus: 'failed' })
         }
       } else {
-        updatePendingMessage(tempId, { pendingStatus: 'failed' })
+        // Standard OpenClaw gateway route
+        const res = await fetch('/api/chat/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            from: 'human',
+            to,
+            content: cleanContent,
+            conversation_id: activeConversation,
+            message_type: 'text',
+            attachments,
+            forward: true,
+          }),
+        })
+
+        if (res.ok) {
+          const data = await res.json()
+          if (data.message) {
+            replacePendingMessage(tempId, data.message)
+          }
+        } else {
+          updatePendingMessage(tempId, { pendingStatus: 'failed' })
+        }
       }
     } catch (err) {
       log.error('Failed to send message:', err)

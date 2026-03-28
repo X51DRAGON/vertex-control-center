@@ -13,6 +13,7 @@ import { ActivityFeed } from './activity-feed'
 import { TaskBoard } from './task-board'
 import { ApprovalGate } from './approval-gate'
 import { NotificationHistory } from './notification-history'
+import { QuickActions } from './quick-actions'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -293,6 +294,18 @@ export function Dashboard() {
 
       <section className="rounded-xl border border-border bg-card p-4">
         <AmyStatusWidget />
+      </section>
+
+      {/* Quick Actions */}
+      <section className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+          <span className="text-sm">🎯</span>
+          <h3 className="text-sm font-semibold text-foreground">Quick Actions</h3>
+          <span className="text-[10px] text-muted-foreground/40">One-click operations</span>
+        </div>
+        <div className="p-3">
+          <QuickActions />
+        </div>
       </section>
 
       {/* Activity Feed + Task Board */}

@@ -9,6 +9,8 @@ import { OnboardingChecklistWidget } from './widgets/onboarding-checklist-widget
 import { EmptyStateLaunchpad } from './empty-state-launchpad'
 import { WidgetGrid } from './widget-grid'
 import { AmyStatusWidget } from './amy-status-widget'
+import { ActivityFeed } from './activity-feed'
+import { TaskBoard } from './task-board'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -290,6 +292,31 @@ export function Dashboard() {
       <section className="rounded-xl border border-border bg-card p-4">
         <AmyStatusWidget />
       </section>
+
+      {/* Activity Feed + Task Board */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <section className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+            <span className="text-sm">⚡</span>
+            <h3 className="text-sm font-semibold text-foreground">Activity Stream</h3>
+            <span className="text-[10px] text-muted-foreground/40">Live from Amy engines</span>
+          </div>
+          <div className="h-[400px]">
+            <ActivityFeed />
+          </div>
+        </section>
+
+        <section className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+            <span className="text-sm">📋</span>
+            <h3 className="text-sm font-semibold text-foreground">Task Queue</h3>
+            <span className="text-[10px] text-muted-foreground/40">Command & Control</span>
+          </div>
+          <div className="h-[400px]">
+            <TaskBoard />
+          </div>
+        </section>
+      </div>
 
       <EmptyStateLaunchpad
         agentCount={dbStats?.agents.total ?? agents.length}

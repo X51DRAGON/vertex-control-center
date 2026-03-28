@@ -19,6 +19,7 @@ import { CommandBar } from './command-bar'
 import { VaultSearch } from './vault-search'
 import { SystemTopology } from './system-topology'
 import { SchedulerPanel } from './scheduler-panel'
+import { IntelligencePanel } from './intelligence-panel'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -341,6 +342,9 @@ export function Dashboard() {
           <SchedulerPanel />
         </div>
       </section>
+
+      {/* Email Lane + Intelligence Report */}
+      <IntelligencePanel />
 
       {/* Activity Feed + Task Board */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

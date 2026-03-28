@@ -25,6 +25,7 @@ import { LogViewer } from './log-viewer'
 import { CapabilityMatrix } from './capability-matrix'
 import { DecisionLog } from './decision-log'
 import { SessionAnalytics } from './session-analytics'
+import { DashboardFooter } from './dashboard-footer'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -495,6 +496,8 @@ export function Dashboard() {
       />
 
       <WidgetGrid data={dashboardData} />
+
+      <DashboardFooter />
     </div>
   )
 }

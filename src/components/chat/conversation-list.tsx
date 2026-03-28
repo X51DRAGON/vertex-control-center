@@ -249,11 +249,34 @@ export function ConversationList({ onNewConversation: _onNewConversation }: Conv
       const requests: Promise<Response>[] = [
         fetch(sessionsUrl),
         fetch('/api/chat/session-prefs'),
+        fetch('/api/amy/chat'),  // Check Amy status
       ]
 
-      const [sessionsRes, prefsRes] = await Promise.all(requests)
+      const [sessionsRes, prefsRes, amyRes] = await Promise.all(requests)
       const sessionsData = sessionsRes.ok ? readSessions(await sessionsRes.json()) : []
       const prefs = prefsRes.ok ? readSessionPrefs(await prefsRes.json().catch(() => null)) : {}
+      const amyStatus = amyRes.ok ? await amyRes.json().catch(() => null) : null
+
+      // Create Amy pinned conversation
+      const amyConversation: Conversation = {
+        id: 'agent_amy',
+        name: 'Amy',
+        source: 'chat' as const,
+        participants: [],
+        lastMessage: {
+          id: 0,
+          conversation_id: 'agent_amy',
+          from_agent: 'amy',
+          to_agent: 'human',
+          content: amyStatus?.status === 'ready'
+            ? `Online • ${amyStatus.model || 'llama3.1:8b'}`
+            : 'Offline • Ollama not running',
+          message_type: 'system' as const,
+          created_at: Math.floor(Date.now() / 1000),
+        },
+        unreadCount: 0,
+        updatedAt: Math.floor(Date.now() / 1000),
+      }
 
       const providerSessions = sessionsData
         .map((s, idx: number) => {
@@ -313,9 +336,11 @@ export function ConversationList({ onNewConversation: _onNewConversation }: Conv
           }
         })
 
-      setConversations(
-        providerSessions.sort((a: Conversation, b: Conversation) => b.updatedAt - a.updatedAt)
-      )
+      // Amy always first, then sorted sessions
+      setConversations([
+        amyConversation,
+        ...providerSessions.sort((a: Conversation, b: Conversation) => b.updatedAt - a.updatedAt),
+      ])
     } catch (err) {
       log.error('Failed to load conversations:', err)
     }
@@ -463,6 +488,44 @@ export function ConversationList({ onNewConversation: _onNewConversation }: Conv
           </div>
         ) : (
           <>
+            {/* Amy — AI Assistant (always pinned at top) */}
+            {filteredConversations.filter(c => c.id === 'agent_amy').map(conv => (
+              <div key="amy-section">
+                <div className="px-3 pt-2 py-1 flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-purple-400/70">
+                  <span className="h-1.5 w-1.5 rounded-full bg-purple-500 animate-pulse" />
+                  AI Assistant
+                </div>
+                <Button
+                  onClick={() => handleSelect(conv.id)}
+                  variant="ghost"
+                  className={`w-full justify-start h-auto px-3 py-2.5 rounded-none ${
+                    activeConversation === conv.id
+                      ? 'bg-accent/60 border-l-2 border-primary'
+                      : 'border-l-2 border-transparent'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 w-full">
+                    <div className="relative flex-shrink-0">
+                      <div className="w-7 h-7 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs font-bold">
+                        A
+                      </div>
+                      <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-card ${
+                        conv.lastMessage?.content.startsWith('Online') ? 'bg-green-500' : 'bg-muted-foreground/30'
+                      }`} />
+                    </div>
+                    <div className="flex-1 min-w-0 text-left">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium text-foreground">Amy</span>
+                        <span className="text-[10px] text-muted-foreground/40">now</span>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground/60 truncate mt-0.5">
+                        {conv.lastMessage?.content || 'AI Operations Assistant'}
+                      </p>
+                    </div>
+                  </div>
+                </Button>
+              </div>
+            ))}
             {activeGatewayRows.length > 0 && (
               <div>
                 <div className="px-3 pt-2 py-1 flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-green-400/70">

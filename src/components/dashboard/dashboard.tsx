@@ -14,6 +14,7 @@ import { TaskBoard } from './task-board'
 import { ApprovalGate } from './approval-gate'
 import { NotificationHistory } from './notification-history'
 import { QuickActions } from './quick-actions'
+import { KnowledgeManager } from './knowledge-manager'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -357,6 +358,18 @@ export function Dashboard() {
           </div>
         </section>
       </div>
+
+      {/* Knowledge Manager */}
+      <section className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+          <span className="text-sm">📚</span>
+          <h3 className="text-sm font-semibold text-foreground">Knowledge Vault</h3>
+          <span className="text-[10px] text-muted-foreground/40">Browse & ingest sovereign knowledge</span>
+        </div>
+        <div className="p-3">
+          <KnowledgeManager />
+        </div>
+      </section>
 
       <EmptyStateLaunchpad
         agentCount={dbStats?.agents.total ?? agents.length}

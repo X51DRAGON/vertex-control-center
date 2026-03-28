@@ -9,7 +9,7 @@ Monitor, command, approve, and observe your AI operations platform from a single
 [![Next.js 16](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)](https://typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![PRs](https://img.shields.io/badge/PRs-9%20merged-blueviolet)]()
+[![PRs](https://img.shields.io/badge/PRs-16%20merged-blueviolet)]()
 
 </div>
 
@@ -23,32 +23,47 @@ Vertex Control Center is the client-facing operations dashboard for **Silver Sno
 
 | Feature | Description |
 |---------|-------------|
-| 💬 **Chat with Amy** | Streaming AI responses via local Ollama, RAG-augmented from knowledge base |
+| 📊 **Command Bar** | Animated KPI strip — health gauge, 6 counters, pulsing LIVE indicator |
+| 🧠 **Amy Intelligence** | Bridge health, system components, neural pipeline, knowledge search |
+| 🗺️ **System Topology** | Live 6-node architecture diagram with health-colored status dots |
+| 🎯 **Quick Actions** | 6 one-click operations: health check, neural sync, approve/reject |
+| ⏰ **Scheduler** | 7 recurring automations with real schedules, last run results |
+| 📧 **Email Lane** | IMAP watcher status, draft/outbox counts, recent log |
+| 🧠 **Intelligence Report** | Component scores (Logs, Approvals, Tasks, Scheduler, Knowledge) |
 | ⚡ **Activity Stream** | Real-time feed from 5 engine modules (92+ events) |
 | 📋 **Task Queue** | Submit and track tasks — watch Amy process them live |
 | 🔐 **Approval Gate** | Approve/reject Amy's proposals with tier-based review |
 | 🔔 **Notifications** | Priority-styled alerts: anomalies, council decisions, health reports |
-| 🎯 **Quick Actions** | One-click operations: health check, neural sync, intelligence report |
-| 📊 **Status Page** | Public GitHub-style system health page (no auth) |
-| 🧠 **Intelligence Widget** | Health score, neural pipeline, knowledge search |
+| 📚 **Knowledge Vault** | Browse 8 knowledge domains, ingest new knowledge with auto-classification |
+| 🔮 **Vault Search** | Full-text search across sovereign knowledge with domain badges |
+| 💬 **Amy Chat** | Streaming AI responses via local Ollama, RAG-augmented |
+| 📄 **Status Page** | Public GitHub-style system health page (no auth required) |
+| 🚀 **Deploy System** | Automated client provisioning via `vertex-deploy.py` |
 
 ---
 
 ## Architecture
 
 ```
-Vertex Control Center (:3000)        Amy API Bridge (:3100)        Ollama (:11434)
+Vertex Control Center (:3000)        Amy API Bridge (:3100)          Ollama (:11434)
 ┌──────────────────────────┐    ┌──────────────────────────┐    ┌─────────────┐
 │  Dashboard               │    │  /api/health             │    │  llama3.1   │
-│  ├── Amy Intelligence    │───▶│  /api/activity           │    │  8b local   │
-│  ├── Quick Actions       │    │  /api/tasks    (CRUD)    │    └──────┬──────┘
-│  ├── Activity Stream     │    │  /api/approvals (A/R)    │           │
-│  ├── Task Queue          │    │  /api/notifications      │           │
-│  ├── Approval Gate       │    │  /api/vault/search       │           │
-│  ├── Notifications       │    │  /api/neurals/status     │    ┌──────▼──────┐
-│  └── Amy Chat (SSE)  ────┼───▶│                          │    │  Sovereign  │
-│                          │    └──────────────────────────┘    │    Vault     │
-│  /status (public)        │                                    └─────────────┘
+│  ├── Command Bar (KPIs)  │    │  /api/activity           │    │  8b local   │
+│  ├── Amy Intelligence    │───▶│  /api/tasks    (CRUD)    │    └──────┬──────┘
+│  ├── System Topology     │    │  /api/approvals (A/R)    │           │
+│  ├── Quick Actions       │    │  /api/notifications      │    ┌──────▼──────┐
+│  ├── Scheduler           │    │  /api/scheduler          │    │  Sovereign  │
+│  ├── Email Lane          │    │  /api/email/status       │    │    Vault    │
+│  ├── Intelligence Report │    │  /api/intelligence       │    │ 1.7M+ words │
+│  ├── Activity Stream     │    │  /api/vault/search       │    └─────────────┘
+│  ├── Task Queue          │    │  /api/knowledge/browse   │
+│  ├── Approval Gate       │    │  /api/knowledge/ingest   │
+│  ├── Notifications       │    │  /api/neurals/status     │
+│  ├── Knowledge Vault     │    │  /api/status             │
+│  ├── Vault Search        │    └──────────────────────────┘
+│  └── Amy Chat (SSE)      │
+│                          │
+│  /status (public)        │
 │  /api/amy/health (public)│
 └──────────────────────────┘
 ```
@@ -84,8 +99,28 @@ See `vertex-deploy.py` for the full 10-step automated provisioning pipeline.
 | Database | SQLite (better-sqlite3, WAL mode) |
 | State | Zustand |
 | AI | Ollama (local LLM) |
-| Bridge | Python REST API (:3100) |
+| Bridge | Python REST API (:3100) — 18 endpoints |
 | Streaming | Server-Sent Events (SSE) |
+
+## Bridge Endpoints
+
+| Path | Method | Purpose |
+|------|--------|---------|
+| `/api/health` | GET | System health score + services |
+| `/api/activity` | GET | Recent activity events |
+| `/api/tasks` | GET/POST | Task queue (CRUD) |
+| `/api/approvals` | GET | Pending approval proposals |
+| `/api/approvals/:id/approve` | POST | Approve proposal |
+| `/api/approvals/:id/reject` | POST | Reject proposal |
+| `/api/notifications` | GET | Notification history |
+| `/api/neurals/status` | GET | Neural sync status |
+| `/api/vault/search` | GET | Search sovereign vault |
+| `/api/knowledge/browse` | GET | List vault domains + files |
+| `/api/knowledge/ingest` | POST | Submit new knowledge |
+| `/api/scheduler` | GET | Automation routines + status |
+| `/api/email/status` | GET | Email lane health + drafts |
+| `/api/intelligence` | GET | Latest intelligence report |
+| `/api/status` | GET | Full system status |
 
 ## Public Endpoints
 
@@ -98,12 +133,18 @@ See `vertex-deploy.py` for the full 10-step automated provisioning pipeline.
 
 | Component | Purpose | Lines |
 |-----------|---------|-------|
+| `command-bar.tsx` | Animated KPI strip with health gauge | 225 |
+| `system-topology.tsx` | SVG architecture diagram with live health | 258 |
+| `scheduler-panel.tsx` | 7 automation routines with expand | 193 |
+| `intelligence-panel.tsx` | Email lane + intelligence report | 194 |
 | `amy-status-widget.tsx` | Intelligence overview + knowledge search | ~200 |
 | `activity-feed.tsx` | Real-time engine event timeline | 302 |
 | `task-board.tsx` | Task CRUD with status badges | 244 |
 | `approval-gate.tsx` | Human-in-the-loop approvals | 234 |
 | `notification-history.tsx` | Priority-styled notification panel | 248 |
 | `quick-actions.tsx` | One-click operation buttons | ~200 |
+| `knowledge-manager.tsx` | Browse vault + ingest knowledge | ~300 |
+| `vault-search.tsx` | Full-text vault search | 137 |
 | `status/page.tsx` | Public health status page | 287 |
 | `api/amy/chat/route.ts` | Ollama chat + RAG | 195 |
 | `api/amy/stream/route.ts` | SSE streaming endpoint | 181 |
@@ -116,9 +157,10 @@ Forked from [builderz-labs/mission-control](https://github.com/builderz-labs/mis
 SSV customizations:
 - Purple theme (h:270) with SSV design tokens
 - Amy AI integration (chat, streaming, RAG)
-- 6 custom dashboard panels
+- 16 custom dashboard panels
 - Public status page
 - Client deployment system
+- 18 bridge API endpoints
 
 ---
 

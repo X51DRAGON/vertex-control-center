@@ -88,7 +88,7 @@ function StatCard({ title, value, icon, trend, subtitle, color = 'default' }: St
   }
 
   const iconColorClasses = {
-    default: 'text-void-cyan',
+    default: 'text-void-purple',
     success: 'text-void-mint',
     warning: 'text-void-amber',
     danger: 'text-void-crimson'

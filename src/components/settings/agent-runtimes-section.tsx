@@ -153,7 +153,7 @@ export function AgentRuntimesSection({ showFeedback }: Props) {
       </p>
 
       {isDocker && (
-        <div className="mb-3 p-2 rounded border border-void-cyan/20 bg-void-cyan/5 text-xs text-muted-foreground">
+        <div className="mb-3 p-2 rounded border border-void-purple/20 bg-void-purple/5 text-xs text-muted-foreground">
           Running in Docker — install directly or use sidecar services for production.
         </div>
       )}

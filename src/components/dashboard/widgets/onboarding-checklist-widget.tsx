@@ -98,9 +98,9 @@ export function OnboardingChecklistWidget() {
 
   if (!visible) return null
 
-  const accentText = isGateway ? 'text-void-cyan' : 'text-void-amber'
-  const accentBg = isGateway ? 'bg-void-cyan' : 'bg-void-amber'
-  const accentBorder = isGateway ? 'border-void-cyan/30' : 'border-void-amber/30'
+  const accentText = isGateway ? 'text-void-purple' : 'text-void-amber'
+  const accentBg = isGateway ? 'bg-void-purple' : 'bg-void-amber'
+  const accentBorder = isGateway ? 'border-void-purple/30' : 'border-void-amber/30'
 
   if (celebrating) {
     return (

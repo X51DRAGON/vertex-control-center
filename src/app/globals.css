@@ -35,7 +35,7 @@
     --info-foreground: 0 0% 98%;
 
     /* Void accent colors (light fallbacks) */
-    --void-cyan: 187 82% 40%;
+    --void-purple: 270 75% 50%;
     --void-mint: 160 60% 40%;
     --void-amber: 38 92% 42%;
     --void-violet: 263 70% 55%;
@@ -56,7 +56,7 @@
     --card-foreground: 210 20% 92%;
     --popover: 220 30% 8%;
     --popover-foreground: 210 20% 92%;
-    --primary: 187 82% 53%;
+    --primary: 270 75% 60%;
     --primary-foreground: 220 30% 6%;
     --secondary: 220 25% 11%;
     --secondary-foreground: 210 20% 92%;
@@ -68,10 +68,10 @@
     --destructive-foreground: 0 0% 98%;
     --border: 220 20% 14%;
     --input: 220 20% 14%;
-    --ring: 187 82% 53%;
+    --ring: 270 75% 60%;
 
     /* Void accent colors */
-    --void-cyan: 187 82% 53%;
+    --void-purple: 270 75% 60%;
     --void-mint: 160 60% 52%;
     --void-amber: 38 92% 50%;
     --void-violet: 263 90% 66%;
@@ -82,7 +82,7 @@
     --success-foreground: 0 0% 98%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 9%;
-    --info: 187 82% 53%;
+    --info: 270 75% 60%;
     --info-foreground: 0 0% 98%;
 
     /* Void surface hierarchy */
@@ -193,8 +193,8 @@
   }
 
   /* Void glow utilities */
-  .glow-cyan {
-    box-shadow: 0 0 20px hsl(var(--void-cyan) / 0.2), 0 0 40px hsl(var(--void-cyan) / 0.08);
+  .glow-purple {
+    box-shadow: 0 0 20px hsl(var(--void-purple) / 0.2), 0 0 40px hsl(var(--void-purple) / 0.08);
   }
   .glow-mint {
     box-shadow: 0 0 20px hsl(var(--void-mint) / 0.2), 0 0 40px hsl(var(--void-mint) / 0.08);
@@ -210,9 +210,9 @@
   .void-panel {
     @apply bg-card/90 backdrop-blur-sm border border-border rounded-lg;
     box-shadow:
-      inset 0 1px 0 hsl(var(--void-cyan) / 0.04),
+      inset 0 1px 0 hsl(var(--void-purple) / 0.04),
       0 4px 24px hsl(var(--background) / 0.5),
-      0 0 0 1px hsl(var(--void-cyan) / 0.04);
+      0 0 0 1px hsl(var(--void-purple) / 0.04);
   }
 
   /* Void border glow — animated gradient border */
@@ -226,7 +226,7 @@
     border-radius: inherit;
     background: linear-gradient(
       135deg,
-      hsl(var(--void-cyan) / 0.3),
+      hsl(var(--void-purple) / 0.3),
       transparent 40%,
       transparent 60%,
       hsl(var(--void-violet) / 0.2)
@@ -245,7 +245,7 @@
     @apply transition-all duration-200;
   }
   .btn-neon:hover {
-    box-shadow: 0 0 16px hsl(var(--void-cyan) / 0.25);
+    box-shadow: 0 0 16px hsl(var(--void-purple) / 0.25);
   }
 
   /* Status badge glow variants */
@@ -263,7 +263,7 @@
   .void-bg {
     background-image:
       /* Subtle cyan spotlight at top */
-      radial-gradient(ellipse 60% 30% at 50% 0%, hsl(var(--void-cyan) / 0.03), transparent),
+      radial-gradient(ellipse 60% 30% at 50% 0%, hsl(var(--void-purple) / 0.03), transparent),
       /* Grid lines */
       repeating-linear-gradient(0deg, hsl(var(--border) / 0.08) 0px, transparent 1px, transparent 40px),
       repeating-linear-gradient(90deg, hsl(var(--border) / 0.08) 0px, transparent 1px, transparent 40px),
@@ -461,7 +461,7 @@
   --border: 222 25% 15%;
   --input: 222 25% 15%;
   --ring: 217 91% 60%;
-  --void-cyan: 217 91% 60%;
+  --void-purple: 217 91% 60%;
   --void-mint: 160 60% 52%;
   --void-amber: 38 92% 50%;
   --void-violet: 263 90% 66%;
@@ -498,7 +498,7 @@
   --border: 270 20% 16%;
   --input: 270 20% 16%;
   --ring: 330 80% 72%;
-  --void-cyan: 330 80% 72%;
+  --void-purple: 330 80% 72%;
   --void-mint: 174 80% 55%;
   --void-amber: 45 100% 60%;
   --void-violet: 280 100% 70%;
@@ -535,7 +535,7 @@
   --border: 194 35% 15%;
   --input: 194 35% 15%;
   --ring: 45 100% 35%;
-  --void-cyan: 175 59% 40%;
+  --void-purple: 175 59% 40%;
   --void-mint: 68 100% 30%;
   --void-amber: 45 100% 35%;
   --void-violet: 237 45% 55%;
@@ -572,7 +572,7 @@
   --border: 240 15% 22%;
   --input: 240 15% 22%;
   --ring: 267 84% 81%;
-  --void-cyan: 189 71% 73%;
+  --void-purple: 189 71% 73%;
   --void-mint: 115 54% 76%;
   --void-amber: 22 99% 68%;
   --void-violet: 267 84% 81%;
@@ -609,7 +609,7 @@
   --border: 232 10% 24%;
   --input: 232 10% 24%;
   --ring: 135 94% 65%;
-  --void-cyan: 191 97% 77%;
+  --void-purple: 191 97% 77%;
   --void-mint: 135 94% 65%;
   --void-amber: 65 92% 76%;
   --void-violet: 265 89% 78%;
@@ -646,7 +646,7 @@
   --border: 220 12% 24%;
   --input: 220 12% 24%;
   --ring: 193 43% 67%;
-  --void-cyan: 193 43% 67%;
+  --void-purple: 193 43% 67%;
   --void-mint: 92 28% 65%;
   --void-amber: 40 71% 73%;
   --void-violet: 311 20% 63%;
@@ -683,7 +683,7 @@
   --border: 0 0% 20%;
   --input: 0 0% 20%;
   --ring: 0 0% 100%;
-  --void-cyan: 0 0% 93%;
+  --void-purple: 0 0% 93%;
   --void-mint: 160 60% 52%;
   --void-amber: 38 92% 50%;
   --void-violet: 263 90% 66%;
@@ -720,7 +720,7 @@
   --border: 120 15% 12%;
   --input: 120 15% 12%;
   --ring: 120 100% 50%;
-  --void-cyan: 120 100% 50%;
+  --void-purple: 120 100% 50%;
   --void-mint: 120 80% 55%;
   --void-amber: 45 100% 45%;
   --void-violet: 120 60% 40%;
@@ -757,7 +757,7 @@
   --border: 40 20% 82%;
   --input: 40 20% 82%;
   --ring: 43 80% 28%;
-  --void-cyan: 43 80% 28%;
+  --void-purple: 43 80% 28%;
   --void-mint: 160 50% 35%;
   --void-amber: 30 80% 40%;
   --void-violet: 263 50% 45%;

@@ -39,7 +39,7 @@ function resolveMetadataBase(): URL {
   }
 
   // Prevent localhost fallback in production metadata when env is unset.
-  return new URL('https://mission-control.local')
+  return new URL('https://vertex-control-center.local')
 }
 
 const metadataBase = resolveMetadataBase()
@@ -52,8 +52,8 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'Mission Control — AI Agent Orchestration Dashboard',
-  description: 'Open-source dashboard for AI agent orchestration. Manage agent fleets, dispatch tasks, track costs, and coordinate multi-agent workflows. Self-hosted, zero dependencies, SQLite-powered.',
+  title: 'Vertex Control Center — AI Operations Dashboard',
+  description: 'AI agent orchestration dashboard by Silver Snow Studios. Manage agents, dispatch tasks, track costs, and coordinate workflows. Self-hosted, sovereign, SQLite-powered.',
   metadataBase,
   icons: {
     icon: [
@@ -64,22 +64,22 @@ export const metadata: Metadata = {
     shortcut: ['/icon.png'],
   },
   openGraph: {
-    title: 'Mission Control — AI Agent Orchestration Dashboard',
-    description: 'Open-source dashboard for AI agent orchestration. Manage agent fleets, dispatch tasks, track costs, and coordinate multi-agent workflows.',
-    images: [{ url: '/brand/mc-logo-512.png', width: 512, height: 512, alt: 'Mission Control — open-source AI agent orchestration dashboard' }],
+    title: 'Vertex Control Center — AI Operations Dashboard',
+    description: 'AI agent orchestration dashboard by Silver Snow Studios. Manage agents, dispatch tasks, track costs, and coordinate workflows.',
+    images: [{ url: '/brand/mc-logo-512.png', width: 512, height: 512, alt: 'Vertex Control Center — AI operations dashboard by Silver Snow Studios' }],
     type: 'website',
-    siteName: 'Mission Control',
+    siteName: 'Vertex Control Center',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Mission Control — AI Agent Orchestration Dashboard',
-    description: 'Open-source dashboard for AI agent orchestration. Manage agent fleets, dispatch tasks, track costs, and coordinate multi-agent workflows.',
+    title: 'Vertex Control Center — AI Operations Dashboard',
+    description: 'AI agent orchestration dashboard by Silver Snow Studios. Manage agents, dispatch tasks, track costs, and coordinate workflows.',
     images: ['/brand/mc-logo-512.png'],
   },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Mission Control',
+    title: 'Vertex Control Center',
   },
 }
 

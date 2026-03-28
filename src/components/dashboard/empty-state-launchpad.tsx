@@ -156,7 +156,7 @@ export function EmptyStateLaunchpad({ agentCount, taskCount, onNavigate }: Props
               </p>
               <Button
                 size="sm"
-                className="text-xs w-full bg-void-cyan/20 text-void-cyan border border-void-cyan/30 hover:bg-void-cyan/30"
+                className="text-xs w-full bg-void-purple/20 text-void-purple border border-void-purple/30 hover:bg-void-purple/30"
                 disabled={!hasAgents}
                 onClick={() => onNavigate('tasks')}
               >
@@ -171,7 +171,7 @@ export function EmptyStateLaunchpad({ agentCount, taskCount, onNavigate }: Props
       <div className="mt-5 flex items-center gap-3">
         <div className="flex-1 h-1.5 rounded-full bg-border/20 overflow-hidden relative">
           {completedCount < 3 && (
-            <div className="absolute inset-0 bg-gradient-to-r from-void-amber/10 to-void-cyan/10 animate-pulse" />
+            <div className="absolute inset-0 bg-gradient-to-r from-void-amber/10 to-void-purple/10 animate-pulse" />
           )}
           <div
             className="h-full rounded-full relative overflow-hidden transition-all duration-1000 ease-out"
@@ -179,7 +179,7 @@ export function EmptyStateLaunchpad({ agentCount, taskCount, onNavigate }: Props
               width: `${(completedCount / 3) * 100}%`,
               background: completedCount === 3
                 ? 'linear-gradient(90deg, rgb(16 185 129) 0%, rgb(52 211 153) 100%)'
-                : 'linear-gradient(90deg, var(--void-amber) 0%, var(--void-cyan) 100%)',
+                : 'linear-gradient(90deg, var(--void-amber) 0%, var(--void-purple) 100%)',
             }}
           >
             <div className="absolute inset-0 shimmer-bar" />

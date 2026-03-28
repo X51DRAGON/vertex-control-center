@@ -182,7 +182,7 @@ export function SecurityScanCard({ compact = false, autoScan = false }: { compac
           <p className="text-sm text-muted-foreground mb-1">Run a comprehensive security scan of your installation</p>
           <p className="text-xs text-muted-foreground/60">Checks credentials, network config, OpenClaw hardening, and runtime security</p>
         </div>
-        <Button onClick={runScan} variant="outline" size="sm" className="border-void-cyan/30 text-void-cyan hover:bg-void-cyan/10">
+        <Button onClick={runScan} variant="outline" size="sm" className="border-void-purple/30 text-void-purple hover:bg-void-purple/10">
           Run Security Scan
         </Button>
       </div>
@@ -258,7 +258,7 @@ export function SecurityScanCard({ compact = false, autoScan = false }: { compac
               disabled={fixing !== null || autoFixableChecks.length === 0}
               variant="outline"
               size="sm"
-              className="text-xs border-void-cyan/30 text-void-cyan hover:bg-void-cyan/10"
+              className="text-xs border-void-purple/30 text-void-purple hover:bg-void-purple/10"
             >
               {fixing === 'all' ? 'Fixing...' : 'Fix Auto-Fixable'}
             </Button>
@@ -325,12 +325,12 @@ export function SecurityScanCard({ compact = false, autoScan = false }: { compac
                         <p className="text-xs text-muted-foreground">{check.detail}</p>
                         {check.fix && check.status !== 'pass' && (
                           <div className="flex items-center gap-1.5 mt-0.5">
-                            <p className="text-xs text-void-cyan/70 flex-1 min-w-0">Fix: {check.fix}</p>
+                            <p className="text-xs text-void-purple/70 flex-1 min-w-0">Fix: {check.fix}</p>
                             {FIXABLE_IDS.has(check.id) && (
                               <button
                                 onClick={(e) => { e.stopPropagation(); runFix([check.id]) }}
                                 disabled={fixing !== null}
-                                className="shrink-0 px-1.5 py-0.5 text-2xs rounded border border-void-cyan/30 text-void-cyan hover:bg-void-cyan/10 transition-colors disabled:opacity-50"
+                                className="shrink-0 px-1.5 py-0.5 text-2xs rounded border border-void-purple/30 text-void-purple hover:bg-void-purple/10 transition-colors disabled:opacity-50"
                                 title={FIX_SAFETY[check.id] === 'requires-review' ? 'Requires review — may affect running services' : FIX_SAFETY[check.id] === 'requires-restart' ? 'Requires restart to take effect' : 'Auto-fix this issue'}
                               >
                                 {fixing === check.id ? 'Fixing...' : FIX_SAFETY[check.id] === 'requires-review' ? 'Fix *' : 'Fix'}

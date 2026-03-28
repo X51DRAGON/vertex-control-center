@@ -8,6 +8,7 @@ import { SignalPill, getLocalOsStatus, getProviderHealth, getMcHealth } from './
 import { OnboardingChecklistWidget } from './widgets/onboarding-checklist-widget'
 import { EmptyStateLaunchpad } from './empty-state-launchpad'
 import { WidgetGrid } from './widget-grid'
+import { AmyStatusWidget } from './amy-status-widget'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -284,6 +285,10 @@ export function Dashboard() {
             <SignalPill label="Errors" value={String(errorCount)} tone={errorCount > 0 ? 'warning' : 'success'} />
           </div>
         </div>
+      </section>
+
+      <section className="rounded-xl border border-border bg-card p-4">
+        <AmyStatusWidget />
       </section>
 
       <EmptyStateLaunchpad

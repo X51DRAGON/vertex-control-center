@@ -18,6 +18,7 @@ import { KnowledgeManager } from './knowledge-manager'
 import { CommandBar } from './command-bar'
 import { VaultSearch } from './vault-search'
 import { SystemTopology } from './system-topology'
+import { SchedulerPanel } from './scheduler-panel'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -328,6 +329,19 @@ export function Dashboard() {
           </div>
         </section>
       </div>
+
+      {/* Scheduler */}
+      <section className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+          <span className="text-sm">⏰</span>
+          <h3 className="text-sm font-semibold text-foreground">Automation Scheduler</h3>
+          <span className="text-[10px] text-muted-foreground/40">Amy's recurring routines</span>
+        </div>
+        <div className="p-3">
+          <SchedulerPanel />
+        </div>
+      </section>
+
       {/* Activity Feed + Task Board */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <section className="rounded-xl border border-border bg-card overflow-hidden">

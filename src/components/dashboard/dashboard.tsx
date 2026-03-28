@@ -24,6 +24,7 @@ import { CouncilChamber } from './council-chamber'
 import { LogViewer } from './log-viewer'
 import { CapabilityMatrix } from './capability-matrix'
 import { DecisionLog } from './decision-log'
+import { SessionAnalytics } from './session-analytics'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -447,6 +448,18 @@ export function Dashboard() {
         </div>
         <div className="p-3">
           <LogViewer />
+        </div>
+      </section>
+
+      {/* Session Analytics */}
+      <section className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+          <span className="text-sm">📈</span>
+          <h3 className="text-sm font-semibold text-foreground">Session Analytics</h3>
+          <span className="text-[10px] text-muted-foreground/40">Live metrics from bridge + proxy</span>
+        </div>
+        <div className="p-3">
+          <SessionAnalytics />
         </div>
       </section>
 

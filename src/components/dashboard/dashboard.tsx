@@ -59,6 +59,7 @@ import { DashboardZone } from './dashboard-zone'
 import { OpsReportBuilder } from './ops-report-builder'
 import { AlertRules } from './alert-rules'
 import { ServiceStatus } from './service-status'
+import { UptimeClock } from './uptime-clock'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -323,6 +324,11 @@ export function Dashboard() {
           ═══════════════════════════════════════════════════ */}
 
       <div id="section-command" />
+
+      {/* HERO 0: Live Uptime Clock */}
+      <section className="rounded-xl border border-border bg-card p-3">
+        <UptimeClock />
+      </section>
 
       {/* HERO 1: Gateway Control Plane (compact) */}
       <section className="rounded-xl border border-border bg-card p-4">

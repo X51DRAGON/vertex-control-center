@@ -9,7 +9,7 @@ Monitor, command, approve, and observe your AI operations platform from a single
 [![Next.js 16](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)](https://typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![PRs](https://img.shields.io/badge/PRs-27%20merged-blueviolet)]()
+[![PRs](https://img.shields.io/badge/PRs-29%20merged-blueviolet)]()
 
 </div>
 
@@ -99,7 +99,7 @@ See `vertex-deploy.py` for the full 10-step automated provisioning pipeline.
 | Database | SQLite (better-sqlite3, WAL mode) |
 | State | Zustand |
 | AI | Ollama (local LLM) |
-| Bridge | Python REST API (:3100) — 24 endpoints |
+| Bridge | Python REST API (:3100) — 26 endpoints |
 | Streaming | Server-Sent Events (SSE) |
 
 ## Bridge Endpoints
@@ -126,6 +126,8 @@ See `vertex-deploy.py` for the full 10-step automated provisioning pipeline.
 | `/api/capabilities` | GET | Capability registry + maturity |
 | `/api/decisions` | GET | Architecture decisions + search |
 | `/api/analytics` | GET | Session metrics + request rates |
+| `/api/audit` | GET | Governance audit trail |
+| `/api/telegram` | GET | Telegram bot sessions + status |
 | `/api/status` | GET | Full system status |
 
 ## Public Endpoints
@@ -157,6 +159,8 @@ See `vertex-deploy.py` for the full 10-step automated provisioning pipeline.
 | `decision-log.tsx` | Architecture decision viewer | 114 |
 | `session-analytics.tsx` | Live metrics + sparkline | 144 |
 | `dashboard-footer.tsx` | Session status bar | 78 |
+| `audit-trail.tsx` | Governance audit timeline | 130 |
+| `telegram-monitor.tsx` | Bot session monitor | 120 |
 | `status/page.tsx` | Public health status page | 287 |
 | `api/amy/chat/route.ts` | Ollama chat + RAG | 195 |
 | `api/amy/stream/route.ts` | SSE streaming endpoint | 181 |
@@ -169,10 +173,10 @@ Forked from [builderz-labs/mission-control](https://github.com/builderz-labs/mis
 SSV customizations:
 - Purple theme (h:270) with SSV design tokens
 - Amy AI integration (chat, streaming, RAG)
-- 22 custom dashboard panels
+- 24 custom dashboard panels
 - Public status page
 - Client deployment system
-- 24 bridge API endpoints
+- 26 bridge API endpoints
 
 ---
 

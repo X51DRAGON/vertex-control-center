@@ -57,6 +57,7 @@ import { CouncilInsights } from './council-insights'
 import { SectionNav } from './section-nav'
 import { DashboardZone } from './dashboard-zone'
 import { OpsReportBuilder } from './ops-report-builder'
+import { AlertRules } from './alert-rules'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -418,6 +419,13 @@ export function Dashboard() {
       <section className="rounded-xl border border-border bg-card overflow-hidden">
         <div className="p-4">
           <OpsReportBuilder />
+        </div>
+      </section>
+
+      {/* HERO 8: Alert Rules */}
+      <section className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="p-4">
+          <AlertRules />
         </div>
       </section>
 

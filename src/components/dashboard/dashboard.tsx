@@ -53,6 +53,7 @@ import { OpsHeartbeat } from './ops-heartbeat'
 import { OpsScoreboard } from './ops-scoreboard'
 import { MissionStatus } from './mission-status'
 import { DailyDigest } from './daily-digest'
+import { ActivityHeatmap } from './activity-heatmap'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -349,6 +350,13 @@ export function Dashboard() {
       <section className="rounded-xl border border-border bg-card overflow-hidden">
         <div className="p-3">
           <DailyDigest />
+        </div>
+      </section>
+
+      {/* Activity Heatmap — 30-day contribution grid */}
+      <section className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="p-3">
+          <ActivityHeatmap />
         </div>
       </section>
 

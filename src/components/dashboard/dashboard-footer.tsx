@@ -43,17 +43,17 @@ export function DashboardFooter() {
           <span className="text-border/30">|</span>
 
           {/* Panel count */}
-          <span>42 panels</span>
+          <span>43 panels</span>
 
           <span className="text-border/30">|</span>
 
           {/* Endpoint count */}
-          <span>42 endpoints</span>
+          <span>43 endpoints</span>
 
           <span className="text-border/30">|</span>
 
           {/* Phase */}
-          <span className="text-primary/50">Phase 123</span>
+          <span className="text-primary/50">Phase 124</span>
         </div>
 
         <div className="flex items-center gap-4">

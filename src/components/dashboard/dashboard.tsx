@@ -32,6 +32,8 @@ import { NeuralRouteViz } from './neural-route-viz'
 import { KeyboardShortcuts } from './keyboard-shortcuts'
 import { EnvironmentInspector } from './environment-inspector'
 import { ActivityHeatmap } from './activity-heatmap'
+import { StorageMonitor } from './storage-monitor'
+import { ModelRegistry } from './model-registry'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -566,6 +568,31 @@ export function Dashboard() {
           </div>
           <div className="p-3">
             <ActivityHeatmap />
+          </div>
+        </section>
+      </div>
+
+      {/* Storage + Model Registry */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <section className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+            <span className="text-sm">💾</span>
+            <h3 className="text-sm font-semibold text-foreground">Storage</h3>
+            <span className="text-[10px] text-muted-foreground/40">Disk usage breakdown</span>
+          </div>
+          <div className="p-3">
+            <StorageMonitor />
+          </div>
+        </section>
+
+        <section className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+            <span className="text-sm">🤖</span>
+            <h3 className="text-sm font-semibold text-foreground">Model Registry</h3>
+            <span className="text-[10px] text-muted-foreground/40">Ollama AI models</span>
+          </div>
+          <div className="p-3">
+            <ModelRegistry />
           </div>
         </section>
       </div>

@@ -62,6 +62,7 @@ import { ServiceStatus } from './service-status'
 import { UptimeClock } from './uptime-clock'
 import { EventTimeline } from './event-timeline'
 import { ResourceMonitor } from './resource-monitor'
+import { SystemPulse } from './system-pulse'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -326,6 +327,11 @@ export function Dashboard() {
           ═══════════════════════════════════════════════════ */}
 
       <div id="section-command" />
+
+      {/* PULSE BAR: At-a-glance system health (Phase 140) */}
+      <section className="rounded-xl border border-border bg-card overflow-hidden">
+        <SystemPulse />
+      </section>
 
       {/* HERO 0: Live Uptime Clock */}
       <section className="rounded-xl border border-border bg-card p-3">

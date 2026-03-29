@@ -40,6 +40,8 @@ import { GitPulse } from './git-pulse'
 import { UptimeMonitor } from './uptime-monitor'
 import { PerformanceMetrics } from './performance-metrics'
 import { ConfigViewer } from './config-viewer'
+import { DependencyMap } from './dependency-map'
+import { NetworkPulse } from './network-pulse'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -674,6 +676,31 @@ export function Dashboard() {
           </div>
           <div className="p-3">
             <ConfigViewer />
+          </div>
+        </section>
+      </div>
+
+      {/* Dependency Map + Network Pulse */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <section className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+            <span className="text-sm">🔗</span>
+            <h3 className="text-sm font-semibold text-foreground">Dependency Map</h3>
+            <span className="text-[10px] text-muted-foreground/40">Module imports</span>
+          </div>
+          <div className="p-3">
+            <DependencyMap />
+          </div>
+        </section>
+
+        <section className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+            <span className="text-sm">📡</span>
+            <h3 className="text-sm font-semibold text-foreground">Network Pulse</h3>
+            <span className="text-[10px] text-muted-foreground/40">Port scan + latency</span>
+          </div>
+          <div className="p-3">
+            <NetworkPulse />
           </div>
         </section>
       </div>

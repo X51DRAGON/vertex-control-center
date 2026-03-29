@@ -54,6 +54,7 @@ import { MissionStatus } from './mission-status'
 import { DailyDigest } from './daily-digest'
 import { ActivityHeatmap } from './activity-heatmap'
 import { CouncilInsights } from './council-insights'
+import { SectionNav } from './section-nav'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -309,7 +310,9 @@ export function Dashboard() {
 
   return (
     <div className="p-5 space-y-4">
+      <SectionNav />
       <OnboardingChecklistWidget />
+      <div id="section-command" />
       <section className="rounded-xl border border-border bg-card p-4">
         <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
           <div>
@@ -340,6 +343,7 @@ export function Dashboard() {
       </section>
 
       {/* Ops Heartbeat — Live Pulse Monitor */}
+      <div id="section-pulse" />
       <section className="rounded-xl border border-border bg-card overflow-hidden">
         <div className="p-3">
           <OpsHeartbeat />
@@ -361,6 +365,7 @@ export function Dashboard() {
       </section>
 
       {/* Interactive 3D Topology + Quick Actions */}
+      <div id="section-topology" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <section className="rounded-xl border border-border bg-card overflow-hidden">
           <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
@@ -387,6 +392,7 @@ export function Dashboard() {
       </div>
 
       {/* Scheduler + Council Chamber */}
+      <div id="section-operations" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <section className="rounded-xl border border-border bg-card overflow-hidden">
           <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
@@ -465,6 +471,7 @@ export function Dashboard() {
       </div>
 
       {/* Knowledge Manager + Vault Search */}
+      <div id="section-knowledge" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <section className="rounded-xl border border-border bg-card overflow-hidden">
           <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
@@ -514,6 +521,7 @@ export function Dashboard() {
       </section>
 
       {/* Capability Matrix + Decision Log */}
+      <div id="section-observability" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <section className="rounded-xl border border-border bg-card overflow-hidden">
           <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
@@ -703,6 +711,7 @@ export function Dashboard() {
       </div>
 
       {/* Dependency Map + Network Pulse */}
+      <div id="section-infra" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <section className="rounded-xl border border-border bg-card overflow-hidden">
           <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
@@ -732,6 +741,7 @@ export function Dashboard() {
           </div>
         </section>
 
+        <div id="section-governance" />
         <section className="rounded-xl border border-border bg-card overflow-hidden">
           <div className="p-3">
             <CouncilInsights />

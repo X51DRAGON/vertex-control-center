@@ -9,7 +9,7 @@ Monitor, command, approve, and observe your AI operations platform from a single
 [![Next.js 16](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)](https://typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![PRs](https://img.shields.io/badge/PRs-40%20merged-blueviolet)]()
+[![PRs](https://img.shields.io/badge/PRs-42%20merged-blueviolet)]()
 
 </div>
 
@@ -99,7 +99,7 @@ See `vertex-deploy.py` for the full 10-step automated provisioning pipeline.
 | Database | SQLite (better-sqlite3, WAL mode) |
 | State | Zustand |
 | AI | Ollama (local LLM) |
-| Bridge | Python REST API (:3100) — 34 endpoints |
+| Bridge | Python REST API (:3100) — 36 endpoints |
 | Streaming | Server-Sent Events (SSE) |
 
 ## Bridge Endpoints
@@ -136,6 +136,8 @@ See `vertex-deploy.py` for the full 10-step automated provisioning pipeline.
 | `/api/errors` | GET | Cross-log error tracking |
 | `/api/git` | GET | Repository stats + commits |
 | `/api/uptime` | GET | Service uptime + process ages |
+| `/api/performance` | GET | API request distribution + throughput |
+| `/api/config` | GET | Platform configuration overview |
 | `/api/status` | GET | Full system status |
 
 ## Public Endpoints
@@ -179,6 +181,8 @@ See `vertex-deploy.py` for the full 10-step automated provisioning pipeline.
 | `error-tracker.tsx` | Cross-log error rates | 116 |
 | `git-pulse.tsx` | Repository activity | 86 |
 | `uptime-monitor.tsx` | Service availability | 96 |
+| `performance-metrics.tsx` | API throughput + distribution | 101 |
+| `config-viewer.tsx` | Platform configuration | 108 |
 | `status/page.tsx` | Public health status page | 287 |
 | `api/amy/chat/route.ts` | Ollama chat + RAG | 195 |
 | `api/amy/stream/route.ts` | SSE streaming endpoint | 181 |
@@ -191,10 +195,10 @@ Forked from [builderz-labs/mission-control](https://github.com/builderz-labs/mis
 SSV customizations:
 - Purple theme (h:270) with SSV design tokens
 - Amy AI integration (chat, streaming, RAG)
-- 34 custom dashboard panels
+- 36 custom dashboard panels
 - Public status page
 - Client deployment system
-- 34 bridge API endpoints
+- 36 bridge API endpoints
 
 ---
 

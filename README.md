@@ -9,7 +9,7 @@ Monitor, command, approve, and observe your AI operations platform from a single
 [![Next.js 16](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)](https://typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![PRs](https://img.shields.io/badge/PRs-49%20merged-blueviolet)]()
+[![PRs](https://img.shields.io/badge/PRs-50%20merged-blueviolet)]()
 
 </div>
 
@@ -188,6 +188,7 @@ See `vertex-deploy.py` for the full 10-step automated provisioning pipeline.
 | `dependency-map.tsx` | Module import graph | 107 |
 | `network-pulse.tsx` | Port scan + latency | 98 |
 | `reagraph-topology.tsx` | Interactive React Flow topology with edges | 460 |
+| `safety-rails.tsx` | 5-layer guardrail visualization panel | 320 |
 | `status/page.tsx` | Public health status page | 287 |
 | `api/amy/chat/route.ts` | Ollama chat + RAG | 195 |
 | `api/amy/stream/route.ts` | SSE streaming endpoint | 181 |

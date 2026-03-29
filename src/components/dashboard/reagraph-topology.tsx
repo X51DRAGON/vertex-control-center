@@ -1,23 +1,32 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import {
-  GraphCanvas,
-  GraphCanvasRef,
-  type Theme,
-  type GraphNode as ReagraphNode,
-  type GraphEdge as ReagraphEdge,
-  type InternalGraphNode,
-} from 'reagraph'
+  ReactFlow,
+  Node,
+  Edge,
+  useNodesState,
+  useEdgesState,
+  Controls,
+  Background,
+  BackgroundVariant,
+  Position,
+} from '@xyflow/react'
+import '@xyflow/react/dist/style.css'
 
 /**
- * ReagraphTopology — Interactive WebGL Network Graph
+ * ReagraphTopology — Interactive System Topology
  *
- * Phase 118: Replaces the static SVG System Topology with an interactive
- * force-directed graph powered by Reagraph (WebGL).
+ * Phase 118 v4: Rebuilt with React Flow for rich, glossy nodes
+ * inspired by the OpenClaw Command Center design.
  *
- * v2 — Fixed: dark background, smaller nodes, visible edges,
- * cleaner 2D layout, muted futuristic colors.
+ * Features:
+ * - Custom HTML nodes with emoji icons inside glowing circles
+ * - Central "Amy Bridge" hub node (largest)
+ * - Click any node → detail panel slides open
+ * - Animated edges showing data flow
+ * - Dark grid background matching VCC aesthetic
+ * - Health-colored glow borders (green/amber/red)
  */
 
 type NodeStatus = 'healthy' | 'degraded' | 'offline' | 'loading'
@@ -30,103 +39,169 @@ interface TopologyNodeData {
   detail: string
   port?: string
   tier: 'core' | 'service' | 'module'
+  description: string
 }
 
-// --- Status colors — muted, elegant, not garish ---
-
-const STATUS_FILLS: Record<NodeStatus, string> = {
-  healthy: '#6ee7b7',   // emerald-300 (muted)
-  degraded: '#fcd34d',  // amber-300
-  offline: '#fca5a5',   // red-300
-  loading: '#52525b',   // zinc-600
+// ╔════════════════════════════════════════════════════════════╗
+// ║  🎨  COLOR PALETTE                                       ║
+// ║                                                          ║
+// ║  Change these to adjust the glow colors for each state.  ║
+// ╚════════════════════════════════════════════════════════════╝
+const STATUS_STYLES: Record<NodeStatus, { glow: string; border: string; text: string; bg: string }> = {
+  healthy:  { glow: '0 0 20px rgba(52, 211, 153, 0.4)',  border: '#34d399', text: '#6ee7b7', bg: 'rgba(52, 211, 153, 0.08)' },
+  degraded: { glow: '0 0 20px rgba(251, 191, 36, 0.4)',  border: '#fbbf24', text: '#fcd34d', bg: 'rgba(251, 191, 36, 0.08)' },
+  offline:  { glow: '0 0 20px rgba(248, 113, 113, 0.4)', border: '#f87171', text: '#fca5a5', bg: 'rgba(248, 113, 113, 0.08)' },
+  loading:  { glow: '0 0 10px rgba(113, 113, 122, 0.3)', border: '#52525b', text: '#71717a', bg: 'rgba(113, 113, 122, 0.05)' },
 }
 
-// --- SSV Dark Theme — deep purples, subtle edges ---
-
-const ssvDarkTheme: Theme = {
-  canvas: {
-    background: '#0c0a14',   // very dark purple-black
-    fog: '#0c0a14',
-  },
-  node: {
-    fill: '#8b5cf6',         // violet-500
-    activeFill: '#a78bfa',   // violet-400
-    opacity: 1,
-    selectedOpacity: 1,
-    inactiveOpacity: 0.15,
-    label: {
-      color: '#a1a1aa',      // zinc-400
-      stroke: '#0c0a14',     // match bg
-      activeColor: '#e4e4e7',
-    },
-  },
-  ring: {
-    fill: '#6d28d9',         // violet-700
-    activeFill: '#8b5cf6',
-  },
-  edge: {
-    fill: '#6d28d9',         // violet-700
-    activeFill: '#a78bfa',   // violet-400
-    opacity: 0.6,            // much more visible!
-    selectedOpacity: 1,
-    inactiveOpacity: 0.12,
-    label: {
-      color: '#52525b',      // zinc-600
-      activeColor: '#a1a1aa',
-    },
-  },
-  arrow: {
-    fill: '#7c3aed',         // violet-600
-    activeFill: '#a78bfa',
-  },
-  lasso: {
-    background: 'rgba(109, 40, 217, 0.1)',
-    border: 'rgba(139, 92, 246, 0.3)',
-  },
+// ╔════════════════════════════════════════════════════════════╗
+// ║  🎛️  NODE SIZE TUNING GUIDE                              ║
+// ║                                                          ║
+// ║  These numbers control the ICON CIRCLE size in pixels.   ║
+// ║  Higher = bigger circle with bigger icon.                ║
+// ║                                                          ║
+// ║  Recommended range: 40 (small) → 80 (large)             ║
+// ║                                                          ║
+// ║  • core    = Most important (Bridge, Dashboard, Ollama)  ║
+// ║  • service = Supporting services (Vault, Engines, Proxy) ║
+// ║  • module  = Smaller modules (Scheduler, Telegram, etc)  ║
+// ╚════════════════════════════════════════════════════════════╝
+const TIER_ICON_SIZE: Record<string, number> = {
+  core: 64,      // 🔴 Big glowing circles — main pillars
+  service: 52,   // 🟡 Medium circles — key services
+  module: 44,    // 🟢 Smaller circles — modules
 }
 
-// --- Topology node definitions ---
+const TIER_FONT_SIZE: Record<string, number> = {
+  core: 28,      // Emoji size inside the circle
+  service: 22,
+  module: 18,
+}
+
+// ═══════════════════════════════════════════════════════════
+//  🎯  CUSTOM NODE COMPONENT — The glossy circle with icon
+// ═══════════════════════════════════════════════════════════
+
+function TopologyNodeComponent({ data }: { data: any }) {
+  const nodeData = data as TopologyNodeData & { onClick: (d: TopologyNodeData) => void }
+  const styles = STATUS_STYLES[nodeData.status]
+  const iconSize = TIER_ICON_SIZE[nodeData.tier] || 48
+  const fontSize = TIER_FONT_SIZE[nodeData.tier] || 20
+  const isCore = nodeData.tier === 'core'
+
+  return (
+    <div
+      className="flex flex-col items-center gap-1.5 cursor-pointer group"
+      onClick={() => nodeData.onClick?.(nodeData)}
+    >
+      {/* Glowing icon circle */}
+      <div
+        className={`relative flex items-center justify-center rounded-full transition-all duration-300 group-hover:scale-110 ${
+          nodeData.status === 'healthy' ? 'animate-pulse-slow' : ''
+        }`}
+        style={{
+          width: iconSize,
+          height: iconSize,
+          background: `radial-gradient(circle at 35% 35%, ${styles.bg}, rgba(15, 10, 25, 0.9))`,
+          border: `2px solid ${styles.border}`,
+          boxShadow: styles.glow,
+        }}
+      >
+        {/* Outer ring for core nodes */}
+        {isCore && (
+          <div
+            className="absolute inset-[-4px] rounded-full animate-spin-slow"
+            style={{
+              border: `1px solid ${styles.border}40`,
+              borderTopColor: styles.border,
+            }}
+          />
+        )}
+        <span style={{ fontSize }} className="select-none">{nodeData.icon}</span>
+      </div>
+
+      {/* Label */}
+      <div className="flex flex-col items-center">
+        <span className="text-[10px] font-semibold text-zinc-200 whitespace-nowrap">
+          {nodeData.label}
+        </span>
+        <span className="text-[8px] font-mono whitespace-nowrap" style={{ color: styles.text }}>
+          {nodeData.detail}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+const nodeTypes = { topology: TopologyNodeComponent }
+
+// ═══════════════════════════════════════════════════════════
+//  📐  NODE POSITIONS — Where each node sits on the canvas
+//
+//  x, y are pixel positions. The canvas is ~560 x 340.
+//  Change these to rearrange the layout!
+// ═══════════════════════════════════════════════════════════
+
+const NODE_POSITIONS: Record<string, { x: number; y: number }> = {
+  bridge:    { x: 240, y: 130 },   // 🌉 CENTER — the hub
+  dashboard: { x: 240, y: 0 },     // 🖥️ Top center
+  ollama:    { x: 60,  y: 80 },    // 🧠 Left
+  vault:     { x: 420, y: 80 },    // 🏛️ Right
+  engines:   { x: 120, y: 240 },   // ⚙️ Bottom-left
+  scheduler: { x: 350, y: 240 },   // ⏰ Bottom-right
+  proxy:     { x: 0,   y: 180 },   // 🔀 Far left
+  telegram:  { x: 50,  y: 310 },   // 📱 Bottom far-left
+  email:     { x: 430, y: 190 },   // 📧 Far right
+  council:   { x: 300, y: 310 },   // 🏛️ Bottom center-right
+}
+
+// ═══════════════════════════════════════════════════════════
+//  🔗  EDGES — Connections between nodes
+//  Each edge shows data flowing from → to
+// ═══════════════════════════════════════════════════════════
+
+const EDGE_DEFS = [
+  { from: 'dashboard', to: 'bridge',    label: 'REST API',     animated: true },
+  { from: 'bridge',    to: 'ollama',    label: 'inference',    animated: true },
+  { from: 'bridge',    to: 'vault',     label: 'knowledge',    animated: true },
+  { from: 'bridge',    to: 'engines',   label: 'modules',      animated: false },
+  { from: 'bridge',    to: 'scheduler', label: 'routines',     animated: false },
+  { from: 'proxy',     to: 'ollama',    label: 'routing',      animated: true },
+  { from: 'engines',   to: 'scheduler', label: 'triggers',     animated: false },
+  { from: 'engines',   to: 'email',     label: 'drafts',       animated: false },
+  { from: 'engines',   to: 'telegram',  label: 'commands',     animated: false },
+  { from: 'engines',   to: 'council',   label: 'cases',        animated: false },
+  { from: 'council',   to: 'ollama',    label: 'multi-model',  animated: true },
+  { from: 'vault',     to: 'engines',   label: 'search',       animated: false },
+]
+
+// ═══════════════════════════════════════════════════════════
+//  🚀  MAIN COMPONENT
+// ═══════════════════════════════════════════════════════════
 
 const INITIAL_NODES: TopologyNodeData[] = [
-  { id: 'bridge',    label: 'Amy Bridge',      icon: '🌉', status: 'loading', detail: ':3100',       port: ':3100',  tier: 'core' },
-  { id: 'dashboard', label: 'Dashboard',       icon: '🖥️', status: 'loading', detail: ':3000',       port: ':3000',  tier: 'core' },
-  { id: 'ollama',    label: 'Ollama LLM',      icon: '🧠', status: 'loading', detail: ':11434',      port: ':11434', tier: 'core' },
-  { id: 'vault',     label: 'Sovereign Vault',  icon: '🏛️', status: 'loading', detail: '1.7M+ words',                tier: 'service' },
-  { id: 'engines',   label: 'Amy Engines',      icon: '⚙️', status: 'loading', detail: '8 modules',                  tier: 'service' },
-  { id: 'scheduler', label: 'Scheduler',        icon: '⏰', status: 'loading', detail: '7 routines',                 tier: 'module' },
-  { id: 'proxy',     label: 'Amy Proxy',        icon: '🔀', status: 'loading', detail: 'Neural routing',             tier: 'service' },
-  { id: 'telegram',  label: 'Telegram',         icon: '📱', status: 'loading', detail: 'Bot sessions',               tier: 'module' },
-  { id: 'email',     label: 'Email Lane',       icon: '📧', status: 'loading', detail: 'IMAP watcher',               tier: 'module' },
-  { id: 'council',   label: 'Council',          icon: '🏛️', status: 'loading', detail: '4 advisors',                 tier: 'module' },
+  { id: 'bridge',    label: 'Amy Bridge',      icon: '🌉', status: 'loading', detail: ':3100',         port: ':3100',  tier: 'core',    description: 'Central API gateway connecting all Amy services. All traffic flows through here.' },
+  { id: 'dashboard', label: 'Dashboard',       icon: '🖥️', status: 'loading', detail: ':3000',         port: ':3000',  tier: 'core',    description: 'This Vertex Control Center dashboard — where you are right now!' },
+  { id: 'ollama',    label: 'Ollama LLM',      icon: '🧠', status: 'loading', detail: ':11434',        port: ':11434', tier: 'core',    description: 'Local AI inference engine running 4 models: amy-local, qwen3, llama3.1, nomic-embed-text.' },
+  { id: 'vault',     label: 'Sovereign Vault',  icon: '🏛️', status: 'loading', detail: '1.7M+ words',                 tier: 'service', description: 'Amy\'s knowledge store — 1.7M+ words of ingested documents, policies, and context.' },
+  { id: 'engines',   label: 'Amy Engines',      icon: '⚙️', status: 'loading', detail: '8 modules',                   tier: 'service', description: '8 autonomous Python modules: intelligence, approval, council, tasks, notifications, scheduler, activity, config.' },
+  { id: 'scheduler', label: 'Scheduler',        icon: '⏰', status: 'loading', detail: '7 routines',                  tier: 'module',  description: '7 recurring routines: health checks, email polling, knowledge sync, and more.' },
+  { id: 'proxy',     label: 'Amy Proxy',        icon: '🔀', status: 'loading', detail: 'Neural routing',              tier: 'service', description: 'Smart routing layer that directs requests to the best model for each task.' },
+  { id: 'telegram',  label: 'Telegram',         icon: '📱', status: 'loading', detail: 'Bot sessions',                tier: 'module',  description: 'Telegram bot integration — chat with Amy directly from Telegram.' },
+  { id: 'email',     label: 'Email Lane',       icon: '📧', status: 'loading', detail: 'IMAP watcher',                tier: 'module',  description: 'IMAP email watcher that monitors inboxes and drafts intelligent replies.' },
+  { id: 'council',   label: 'Council',          icon: '🏛️', status: 'loading', detail: '4 advisors',                  tier: 'module',  description: 'Multi-model council: 4 AI advisors debate decisions before recommending action.' },
 ]
-
-const TOPOLOGY_EDGES = [
-  { from: 'dashboard', to: 'bridge',    label: 'REST' },
-  { from: 'bridge',    to: 'ollama',    label: 'inference' },
-  { from: 'bridge',    to: 'vault',     label: 'knowledge' },
-  { from: 'bridge',    to: 'engines',   label: 'modules' },
-  { from: 'bridge',    to: 'scheduler', label: 'routines' },
-  { from: 'proxy',     to: 'ollama',    label: 'routing' },
-  { from: 'engines',   to: 'scheduler', label: 'triggers' },
-  { from: 'engines',   to: 'email',     label: 'drafts' },
-  { from: 'engines',   to: 'telegram',  label: 'commands' },
-  { from: 'engines',   to: 'council',   label: 'cases' },
-  { from: 'council',   to: 'ollama',    label: 'multi-model' },
-  { from: 'vault',     to: 'engines',   label: 'search' },
-]
-
-// Node sizes by tier — subtle differences, NOT blobs
-const TIER_SIZES: Record<string, number> = {
-  core: 5,
-  service: 4,
-  module: 3,
-}
 
 export function ReagraphTopology() {
   const [topoNodes, setTopoNodes] = useState<TopologyNodeData[]>(INITIAL_NODES)
-  const [hoveredNode, setHoveredNode] = useState<{ label: string; sub?: string } | null>(null)
-  const [actives, setActives] = useState<string[]>([])
-  const graphRef = useRef<GraphCanvasRef | null>(null)
+  const [selectedNode, setSelectedNode] = useState<TopologyNodeData | null>(null)
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
+
+  // Handle node click → show detail panel
+  const handleNodeClick = useCallback((nodeData: TopologyNodeData) => {
+    setSelectedNode(prev => prev?.id === nodeData.id ? null : nodeData)
+  }, [])
 
   // Fetch health data
   const refreshHealth = useCallback(async () => {
@@ -172,64 +247,63 @@ export function ReagraphTopology() {
     return () => clearInterval(interval)
   }, [refreshHealth])
 
-  // Auto-fit after layout settles
+  // Build React Flow nodes from topology data
   useEffect(() => {
-    const t1 = setTimeout(() => graphRef.current?.fitNodesInView(undefined, { animated: true }), 1200)
-    const t2 = setTimeout(() => graphRef.current?.fitNodesInView(undefined, { animated: false }), 3000)
-    return () => { clearTimeout(t1); clearTimeout(t2) }
-  }, [])
-
-  // Build Reagraph nodes — small, elegant, color-coded
-  const graphNodes: ReagraphNode[] = useMemo(() =>
-    topoNodes.map(node => ({
+    const flowNodes: Node[] = topoNodes.map(node => ({
       id: node.id,
-      label: `${node.icon} ${node.label}`,
-      fill: STATUS_FILLS[node.status],
-      size: TIER_SIZES[node.tier] || 3,
-      data: node,
-    })),
-    [topoNodes]
-  )
+      type: 'topology',
+      position: NODE_POSITIONS[node.id] || { x: 200, y: 200 },
+      data: { ...node, onClick: handleNodeClick },
+      style: { background: 'transparent', border: 'none' },
+      sourcePosition: Position.Bottom,
+      targetPosition: Position.Top,
+    }))
 
-  // Build Reagraph edges — all with labels
-  const graphEdges: ReagraphEdge[] = useMemo(() =>
-    TOPOLOGY_EDGES.map((edge, i) => ({
+    const flowEdges: Edge[] = EDGE_DEFS.map((e, i) => ({
       id: `e-${i}`,
-      source: edge.from,
-      target: edge.to,
-      label: edge.label,
-      size: edge.from === 'bridge' || edge.to === 'bridge' ? 2 : 1,
-    })),
-    []
-  )
+      source: e.from,
+      target: e.to,
+      label: e.label,
+      animated: e.animated,
+      type: 'smoothstep',
+      style: {
+        stroke: e.animated ? 'rgba(139, 92, 246, 0.5)' : 'rgba(139, 92, 246, 0.2)',
+        strokeWidth: e.animated ? 2 : 1,
+      },
+      labelStyle: {
+        fill: 'rgba(161, 161, 170, 0.5)',
+        fontSize: 8,
+        fontFamily: 'ui-monospace, monospace',
+      },
+      labelBgStyle: {
+        fill: 'rgba(12, 10, 20, 0.8)',
+      },
+    }))
 
-  // Hover handlers
-  const handleNodeHover = useCallback((node: InternalGraphNode) => {
-    setActives([node.id])
-    const d = node.data as TopologyNodeData
-    if (d) {
-      setHoveredNode({
-        label: `${d.icon} ${d.label}`,
-        sub: `${d.detail}${d.port ? `  ·  ${d.port}` : ''}  ·  ${d.status}`,
-      })
-    }
-  }, [])
-
-  const handleNodeUnhover = useCallback(() => {
-    setActives([])
-    setHoveredNode(null)
-  }, [])
-
-  const handleCanvasClick = useCallback(() => {
-    setActives([])
-    setHoveredNode(null)
-  }, [])
+    setNodes(flowNodes)
+    setEdges(flowEdges)
+  }, [topoNodes, handleNodeClick, setNodes, setEdges])
 
   const healthyCount = topoNodes.filter(n => n.status === 'healthy').length
   const totalCount = topoNodes.length
 
   return (
-    <div className="relative w-full overflow-hidden rounded-lg" style={{ height: 340, background: '#0c0a14' }}>
+    <div className="relative w-full overflow-hidden rounded-lg" style={{ height: 380, background: '#0c0a14' }}>
+      {/* Custom CSS for animations */}
+      <style>{`
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.85; }
+        }
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .animate-pulse-slow { animation: pulse-slow 3s ease-in-out infinite; }
+        .animate-spin-slow { animation: spin-slow 8s linear infinite; }
+        .react-flow__edge-text { pointer-events: none; }
+      `}</style>
+
       {/* Node count badge — top-left */}
       <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5">
         <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full backdrop-blur-xl ${
@@ -237,10 +311,7 @@ export function ReagraphTopology() {
             ? 'bg-emerald-500/10 text-emerald-300/80 border border-emerald-500/15'
             : 'bg-amber-500/10 text-amber-300/80 border border-amber-500/15'
         }`}>
-          {healthyCount}/{totalCount} nodes
-        </span>
-        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-violet-500/8 text-violet-300/60 border border-violet-500/12 backdrop-blur-xl">
-          WebGL
+          {healthyCount}/{totalCount} online
         </span>
       </div>
 
@@ -250,43 +321,94 @@ export function ReagraphTopology() {
           onClick={refreshHealth}
           className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/3 text-zinc-500 border border-white/5 backdrop-blur-xl hover:text-violet-300 hover:border-violet-500/20 transition-all"
         >
-          ↻
+          ↻ Refresh
         </button>
       </div>
 
-      {/* WebGL 3D Graph */}
-      <GraphCanvas
-        ref={graphRef}
-        nodes={graphNodes}
-        edges={graphEdges}
-        theme={ssvDarkTheme}
-        layoutType="forceDirected2d"
-        layoutOverrides={{
-          linkDistance: 80,
-          nodeStrength: -180,
-        }}
-        labelType="all"
-        edgeArrowPosition="end"
-        animated={true}
-        draggable={true}
-        defaultNodeSize={3}
-        minNodeSize={2}
-        maxNodeSize={6}
-        cameraMode="pan"
-        actives={actives}
-        onNodePointerOver={handleNodeHover}
-        onNodePointerOut={handleNodeUnhover}
-        onCanvasClick={handleCanvasClick}
-      />
+      {/* React Flow Canvas */}
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        nodeTypes={nodeTypes}
+        fitView
+        fitViewOptions={{ padding: 0.15 }}
+        className="bg-transparent"
+        proOptions={{ hideAttribution: true }}
+        nodesDraggable={true}
+        nodesConnectable={false}
+        elementsSelectable={false}
+        panOnDrag={true}
+        zoomOnScroll={true}
+        minZoom={0.5}
+        maxZoom={2}
+      >
+        <Controls
+          position="bottom-left"
+          style={{
+            background: 'rgba(12, 10, 20, 0.8)',
+            border: '1px solid rgba(139, 92, 246, 0.15)',
+            borderRadius: '8px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+          }}
+        />
+        <Background
+          variant={BackgroundVariant.Dots}
+          gap={30}
+          size={0.8}
+          color="rgba(139, 92, 246, 0.08)"
+        />
+      </ReactFlow>
 
-      {/* Hover tooltip — bottom-center */}
-      {hoveredNode && (
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
-          <div className="px-3 py-1.5 rounded-lg bg-black/70 backdrop-blur-xl border border-white/8 shadow-2xl">
-            <div className="text-[11px] font-mono text-zinc-200">{hoveredNode.label}</div>
-            {hoveredNode.sub && (
-              <div className="text-[9px] font-mono text-zinc-500 mt-0.5">{hoveredNode.sub}</div>
-            )}
+      {/* Selected node detail panel — slides in from right */}
+      {selectedNode && (
+        <div className="absolute top-2 right-12 z-20 w-56 animate-in slide-in-from-right">
+          <div
+            className="rounded-xl p-3 backdrop-blur-xl border"
+            style={{
+              background: 'rgba(12, 10, 20, 0.9)',
+              borderColor: STATUS_STYLES[selectedNode.status].border + '40',
+              boxShadow: STATUS_STYLES[selectedNode.status].glow,
+            }}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">{selectedNode.icon}</span>
+                <span className="text-xs font-semibold text-zinc-200">{selectedNode.label}</span>
+              </div>
+              <button
+                onClick={() => setSelectedNode(null)}
+                className="text-zinc-500 hover:text-zinc-300 text-xs transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Status badge */}
+            <div className="flex items-center gap-2 mb-2">
+              <span
+                className="w-2 h-2 rounded-full"
+                style={{ background: STATUS_STYLES[selectedNode.status].border }}
+              />
+              <span className="text-[10px] font-mono uppercase" style={{ color: STATUS_STYLES[selectedNode.status].text }}>
+                {selectedNode.status}
+              </span>
+              {selectedNode.port && (
+                <span className="text-[10px] font-mono text-zinc-500">{selectedNode.port}</span>
+              )}
+            </div>
+
+            {/* Description */}
+            <p className="text-[10px] text-zinc-400 leading-relaxed">
+              {selectedNode.description}
+            </p>
+
+            {/* Detail */}
+            <div className="mt-2 pt-2 border-t border-white/5">
+              <span className="text-[9px] font-mono text-zinc-600">{selectedNode.detail}</span>
+            </div>
           </div>
         </div>
       )}
@@ -295,21 +417,21 @@ export function ReagraphTopology() {
       <div className="absolute bottom-2 right-2.5 z-10">
         <div className="flex items-center gap-2.5 px-2.5 py-1 rounded-full bg-black/30 backdrop-blur-xl border border-white/4">
           <span className="flex items-center gap-1 text-[8px] font-mono text-zinc-600">
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: STATUS_FILLS.healthy }} />online
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />online
           </span>
           <span className="flex items-center gap-1 text-[8px] font-mono text-zinc-600">
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: STATUS_FILLS.degraded }} />degraded
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />degraded
           </span>
           <span className="flex items-center gap-1 text-[8px] font-mono text-zinc-600">
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: STATUS_FILLS.offline }} />offline
+            <span className="w-1.5 h-1.5 rounded-full bg-red-400" />offline
           </span>
         </div>
       </div>
 
-      {/* Controls hint — bottom-left */}
-      <div className="absolute bottom-2 left-2.5 z-10">
+      {/* Interaction hint */}
+      <div className="absolute bottom-2 left-12 z-10">
         <span className="text-[8px] font-mono text-zinc-700/50 pointer-events-none select-none">
-          drag · scroll · hover
+          click node for details · drag to move · scroll to zoom
         </span>
       </div>
     </div>

@@ -36,7 +36,6 @@ import { TelegramMonitor } from './telegram-monitor'
 import { NeuralRouteViz } from './neural-route-viz'
 import { KeyboardShortcuts } from './keyboard-shortcuts'
 import { EnvironmentInspector } from './environment-inspector'
-import { ActivityHeatmap } from './activity-heatmap'
 import { StorageMonitor } from './storage-monitor'
 import { ModelRegistry } from './model-registry'
 import { CronTimeline } from './cron-timeline'
@@ -598,17 +597,6 @@ export function Dashboard() {
           </div>
           <div className="p-3">
             <EnvironmentInspector />
-          </div>
-        </section>
-
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">🟩</span>
-            <h3 className="text-sm font-semibold text-foreground">Activity Heatmap</h3>
-            <span className="text-[10px] text-muted-foreground/40">90-day activity graph</span>
-          </div>
-          <div className="p-3">
-            <ActivityHeatmap />
           </div>
         </section>
       </div>

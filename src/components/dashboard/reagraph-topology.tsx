@@ -11,18 +11,13 @@ import {
 } from 'reagraph'
 
 /**
- * ReagraphTopology — Interactive 3D WebGL Network Graph
+ * ReagraphTopology — Interactive WebGL Network Graph
  *
- * Phase 118: Replaces the static SVG System Topology with a futuristic
- * force-directed 3D graph powered by Reagraph (WebGL).
+ * Phase 118: Replaces the static SVG System Topology with an interactive
+ * force-directed graph powered by Reagraph (WebGL).
  *
- * Features:
- * - 3D force-directed layout with zoom/rotate/drag
- * - Health-colored nodes (green/amber/red) from /api/amy/health
- * - Animated edges for active data flows
- * - SSV purple dark theme
- * - Hover tooltips with node details
- * - Auto-refresh every 30s
+ * v2 — Fixed: dark background, smaller nodes, visible edges,
+ * cleaner 2D layout, muted futuristic colors.
  */
 
 type NodeStatus = 'healthy' | 'degraded' | 'offline' | 'loading'
@@ -34,106 +29,102 @@ interface TopologyNodeData {
   status: NodeStatus
   detail: string
   port?: string
+  tier: 'core' | 'service' | 'module'
 }
 
-// --- SSV Purple Dark Theme ---
+// --- Status colors — muted, elegant, not garish ---
 
 const STATUS_FILLS: Record<NodeStatus, string> = {
-  healthy: '#34d399',   // emerald-400
-  degraded: '#fbbf24',  // amber-400
-  offline: '#f87171',   // red-400
-  loading: '#71717a',   // zinc-500
+  healthy: '#6ee7b7',   // emerald-300 (muted)
+  degraded: '#fcd34d',  // amber-300
+  offline: '#fca5a5',   // red-300
+  loading: '#52525b',   // zinc-600
 }
 
-const ssvTheme: Theme = {
+// --- SSV Dark Theme — deep purples, subtle edges ---
+
+const ssvDarkTheme: Theme = {
   canvas: {
-    background: 'transparent',
-    fog: 'transparent',
+    background: '#0c0a14',   // very dark purple-black
+    fog: '#0c0a14',
   },
   node: {
-    fill: '#a78bfa',        // purple-400
-    activeFill: '#c084fc',  // purple-400 bright
+    fill: '#8b5cf6',         // violet-500
+    activeFill: '#a78bfa',   // violet-400
     opacity: 1,
     selectedOpacity: 1,
-    inactiveOpacity: 0.2,
+    inactiveOpacity: 0.15,
     label: {
-      color: '#e4e4e7',     // zinc-200
-      stroke: '#18181b',    // zinc-900
-      activeColor: '#fafafa',
-    },
-  },
-  ring: {
-    fill: '#7c3aed',        // violet-600
-    activeFill: '#a78bfa',  // purple-400
-  },
-  edge: {
-    fill: '#7c3aed40',      // violet-600 / 25%
-    activeFill: '#a78bfa',  // purple-400
-    opacity: 0.4,
-    selectedOpacity: 0.8,
-    inactiveOpacity: 0.08,
-    label: {
-      color: '#71717a',     // zinc-500
+      color: '#a1a1aa',      // zinc-400
+      stroke: '#0c0a14',     // match bg
       activeColor: '#e4e4e7',
     },
   },
+  ring: {
+    fill: '#6d28d9',         // violet-700
+    activeFill: '#8b5cf6',
+  },
+  edge: {
+    fill: '#6d28d9',         // violet-700
+    activeFill: '#a78bfa',   // violet-400
+    opacity: 0.6,            // much more visible!
+    selectedOpacity: 1,
+    inactiveOpacity: 0.12,
+    label: {
+      color: '#52525b',      // zinc-600
+      activeColor: '#a1a1aa',
+    },
+  },
   arrow: {
-    fill: '#7c3aed80',      // violet-600 / 50%
+    fill: '#7c3aed',         // violet-600
     activeFill: '#a78bfa',
   },
   lasso: {
-    background: 'rgba(124, 58, 237, 0.08)',
-    border: 'rgba(167, 139, 250, 0.25)',
+    background: 'rgba(109, 40, 217, 0.1)',
+    border: 'rgba(139, 92, 246, 0.3)',
   },
 }
 
-// --- Node definitions ---
+// --- Topology node definitions ---
 
-const TOPOLOGY_NODES: TopologyNodeData[] = [
-  { id: 'dashboard', label: 'Dashboard', icon: '🖥️', status: 'loading', detail: 'Loading...', port: ':3000' },
-  { id: 'bridge', label: 'Amy Bridge', icon: '🌉', status: 'loading', detail: ':3100', port: ':3100' },
-  { id: 'ollama', label: 'Ollama LLM', icon: '🧠', status: 'loading', detail: ':11434', port: ':11434' },
-  { id: 'vault', label: 'Sovereign Vault', icon: '🏛️', status: 'loading', detail: '1.7M+ words' },
-  { id: 'engines', label: 'Amy Engines', icon: '⚙️', status: 'loading', detail: '8 modules' },
-  { id: 'scheduler', label: 'Scheduler', icon: '⏰', status: 'loading', detail: '6 routines' },
-  { id: 'proxy', label: 'Amy Proxy', icon: '🔀', status: 'loading', detail: ':11434', port: ':11434' },
-  { id: 'telegram', label: 'Telegram Bot', icon: '📱', status: 'loading', detail: 'Bot sessions' },
-  { id: 'email', label: 'Email Lane', icon: '📧', status: 'loading', detail: 'IMAP watcher' },
-  { id: 'council', label: 'Council', icon: '🏛️', status: 'loading', detail: '4 advisors' },
+const INITIAL_NODES: TopologyNodeData[] = [
+  { id: 'bridge',    label: 'Amy Bridge',      icon: '🌉', status: 'loading', detail: ':3100',       port: ':3100',  tier: 'core' },
+  { id: 'dashboard', label: 'Dashboard',       icon: '🖥️', status: 'loading', detail: ':3000',       port: ':3000',  tier: 'core' },
+  { id: 'ollama',    label: 'Ollama LLM',      icon: '🧠', status: 'loading', detail: ':11434',      port: ':11434', tier: 'core' },
+  { id: 'vault',     label: 'Sovereign Vault',  icon: '🏛️', status: 'loading', detail: '1.7M+ words',                tier: 'service' },
+  { id: 'engines',   label: 'Amy Engines',      icon: '⚙️', status: 'loading', detail: '8 modules',                  tier: 'service' },
+  { id: 'scheduler', label: 'Scheduler',        icon: '⏰', status: 'loading', detail: '7 routines',                 tier: 'module' },
+  { id: 'proxy',     label: 'Amy Proxy',        icon: '🔀', status: 'loading', detail: 'Neural routing',             tier: 'service' },
+  { id: 'telegram',  label: 'Telegram',         icon: '📱', status: 'loading', detail: 'Bot sessions',               tier: 'module' },
+  { id: 'email',     label: 'Email Lane',       icon: '📧', status: 'loading', detail: 'IMAP watcher',               tier: 'module' },
+  { id: 'council',   label: 'Council',          icon: '🏛️', status: 'loading', detail: '4 advisors',                 tier: 'module' },
 ]
 
 const TOPOLOGY_EDGES = [
-  { from: 'dashboard', to: 'bridge', label: 'REST API' },
-  { from: 'bridge', to: 'ollama', label: 'inference' },
-  { from: 'bridge', to: 'vault', label: 'knowledge' },
-  { from: 'bridge', to: 'engines', label: 'modules' },
-  { from: 'bridge', to: 'scheduler', label: 'routines' },
-  { from: 'proxy', to: 'ollama', label: 'routing' },
-  { from: 'engines', to: 'scheduler', label: 'triggers' },
-  { from: 'engines', to: 'email', label: 'drafts' },
-  { from: 'engines', to: 'telegram', label: 'commands' },
-  { from: 'engines', to: 'council', label: 'cases' },
-  { from: 'council', to: 'ollama', label: 'multi-model' },
-  { from: 'vault', to: 'engines', label: 'search' },
+  { from: 'dashboard', to: 'bridge',    label: 'REST' },
+  { from: 'bridge',    to: 'ollama',    label: 'inference' },
+  { from: 'bridge',    to: 'vault',     label: 'knowledge' },
+  { from: 'bridge',    to: 'engines',   label: 'modules' },
+  { from: 'bridge',    to: 'scheduler', label: 'routines' },
+  { from: 'proxy',     to: 'ollama',    label: 'routing' },
+  { from: 'engines',   to: 'scheduler', label: 'triggers' },
+  { from: 'engines',   to: 'email',     label: 'drafts' },
+  { from: 'engines',   to: 'telegram',  label: 'commands' },
+  { from: 'engines',   to: 'council',   label: 'cases' },
+  { from: 'council',   to: 'ollama',    label: 'multi-model' },
+  { from: 'vault',     to: 'engines',   label: 'search' },
 ]
 
-// Node size mapping based on importance
-const NODE_SIZES: Record<string, number> = {
-  bridge: 14,
-  dashboard: 12,
-  ollama: 12,
-  engines: 11,
-  vault: 11,
-  scheduler: 8,
-  proxy: 8,
-  council: 9,
-  telegram: 7,
-  email: 7,
+// Node sizes by tier — subtle differences, NOT blobs
+const TIER_SIZES: Record<string, number> = {
+  core: 5,
+  service: 4,
+  module: 3,
 }
 
 export function ReagraphTopology() {
-  const [topoNodes, setTopoNodes] = useState<TopologyNodeData[]>(TOPOLOGY_NODES)
-  const [hoveredNode, setHoveredNode] = useState<{ label: string; sub?: string; icon?: string } | null>(null)
+  const [topoNodes, setTopoNodes] = useState<TopologyNodeData[]>(INITIAL_NODES)
+  const [hoveredNode, setHoveredNode] = useState<{ label: string; sub?: string } | null>(null)
   const [actives, setActives] = useState<string[]>([])
   const graphRef = useRef<GraphCanvasRef | null>(null)
 
@@ -147,40 +138,23 @@ export function ReagraphTopology() {
       const services = data.services || []
       const ollamaService = services.find((s: any) => s.name === 'Ollama')
       const bridgeHealth = services.find((s: any) => s.name === 'Bridge Health')
-      const activityService = services.find((s: any) => s.name === 'Activity Log')
 
       setTopoNodes(prev => prev.map(node => {
         switch (node.id) {
           case 'dashboard':
             return { ...node, status: 'healthy' as NodeStatus, detail: `Score: ${data.score}%` }
           case 'bridge':
-            return {
-              ...node,
-              status: (bridgeHealth?.status === 'healthy' ? 'healthy' : 'degraded') as NodeStatus,
-              detail: bridgeHealth?.detail || ':3100',
-            }
+            return { ...node, status: (bridgeHealth?.status === 'healthy' ? 'healthy' : 'degraded') as NodeStatus, detail: bridgeHealth?.detail || ':3100' }
           case 'ollama':
-            return {
-              ...node,
-              status: (ollamaService?.status === 'healthy' ? 'healthy' : ollamaService?.status === 'degraded' ? 'degraded' : 'offline') as NodeStatus,
-              detail: ollamaService?.detail || ':11434',
-            }
-          case 'vault':
-            return { ...node, status: 'healthy' as NodeStatus, detail: activityService?.detail?.match(/(\d+)\s*entries/)?.[0] || '1.7M+ words' }
-          case 'engines':
-            return { ...node, status: 'healthy' as NodeStatus, detail: '8 modules · 100%' }
-          case 'scheduler':
-            return { ...node, status: 'healthy' as NodeStatus, detail: '7 routines' }
-          case 'proxy':
-            return { ...node, status: 'healthy' as NodeStatus, detail: 'Neural routing' }
-          case 'telegram':
-            return { ...node, status: 'healthy' as NodeStatus, detail: '6 sessions' }
-          case 'email':
-            return { ...node, status: 'healthy' as NodeStatus, detail: 'IMAP active' }
-          case 'council':
-            return { ...node, status: 'healthy' as NodeStatus, detail: '4 advisors' }
-          default:
-            return node
+            return { ...node, status: (ollamaService?.status === 'healthy' ? 'healthy' : ollamaService?.status === 'degraded' ? 'degraded' : 'offline') as NodeStatus, detail: ollamaService?.detail || ':11434' }
+          case 'vault':     return { ...node, status: 'healthy' as NodeStatus, detail: '1.7M+ words' }
+          case 'engines':   return { ...node, status: 'healthy' as NodeStatus, detail: '8 modules' }
+          case 'scheduler': return { ...node, status: 'healthy' as NodeStatus, detail: '7 routines' }
+          case 'proxy':     return { ...node, status: 'healthy' as NodeStatus, detail: 'Neural routing' }
+          case 'telegram':  return { ...node, status: 'healthy' as NodeStatus, detail: '6 sessions' }
+          case 'email':     return { ...node, status: 'healthy' as NodeStatus, detail: 'IMAP active' }
+          case 'council':   return { ...node, status: 'healthy' as NodeStatus, detail: '4 advisors' }
+          default: return node
         }
       }))
     } catch {
@@ -200,44 +174,43 @@ export function ReagraphTopology() {
 
   // Auto-fit after layout settles
   useEffect(() => {
-    const t1 = setTimeout(() => graphRef.current?.fitNodesInView(undefined, { animated: false }), 800)
-    const t2 = setTimeout(() => graphRef.current?.fitNodesInView(undefined, { animated: false }), 2500)
+    const t1 = setTimeout(() => graphRef.current?.fitNodesInView(undefined, { animated: true }), 1200)
+    const t2 = setTimeout(() => graphRef.current?.fitNodesInView(undefined, { animated: false }), 3000)
     return () => { clearTimeout(t1); clearTimeout(t2) }
   }, [])
 
-  // Build Reagraph nodes
+  // Build Reagraph nodes — small, elegant, color-coded
   const graphNodes: ReagraphNode[] = useMemo(() =>
     topoNodes.map(node => ({
       id: node.id,
       label: `${node.icon} ${node.label}`,
       fill: STATUS_FILLS[node.status],
-      size: NODE_SIZES[node.id] || 8,
+      size: TIER_SIZES[node.tier] || 3,
       data: node,
     })),
     [topoNodes]
   )
 
-  // Build Reagraph edges
+  // Build Reagraph edges — all with labels
   const graphEdges: ReagraphEdge[] = useMemo(() =>
     TOPOLOGY_EDGES.map((edge, i) => ({
-      id: `edge-${i}`,
+      id: `e-${i}`,
       source: edge.from,
       target: edge.to,
       label: edge.label,
-      size: edge.from === 'dashboard' || edge.to === 'bridge' ? 2 : 1,
+      size: edge.from === 'bridge' || edge.to === 'bridge' ? 2 : 1,
     })),
     []
   )
 
-  // Interaction handlers
+  // Hover handlers
   const handleNodeHover = useCallback((node: InternalGraphNode) => {
     setActives([node.id])
     const d = node.data as TopologyNodeData
     if (d) {
       setHoveredNode({
         label: `${d.icon} ${d.label}`,
-        sub: `${d.detail}${d.port ? ` · ${d.port}` : ''} · ${d.status}`,
-        icon: d.icon,
+        sub: `${d.detail}${d.port ? `  ·  ${d.port}` : ''}  ·  ${d.status}`,
       })
     }
   }, [])
@@ -256,89 +229,87 @@ export function ReagraphTopology() {
   const totalCount = topoNodes.length
 
   return (
-    <div className="relative h-[340px] w-full overflow-hidden rounded-lg">
-      {/* Header stats overlay */}
-      <div className="absolute top-2 left-2 z-10 flex items-center gap-2">
-        <span className={`text-[10px] font-mono px-2 py-0.5 rounded-md backdrop-blur-xl ${
+    <div className="relative w-full overflow-hidden rounded-lg" style={{ height: 340, background: '#0c0a14' }}>
+      {/* Node count badge — top-left */}
+      <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5">
+        <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full backdrop-blur-xl ${
           healthyCount === totalCount
-            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-            : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+            ? 'bg-emerald-500/10 text-emerald-300/80 border border-emerald-500/15'
+            : 'bg-amber-500/10 text-amber-300/80 border border-amber-500/15'
         }`}>
           {healthyCount}/{totalCount} nodes
         </span>
-        <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-400 border border-purple-500/20 backdrop-blur-xl">
-          3D · WebGL
+        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-violet-500/8 text-violet-300/60 border border-violet-500/12 backdrop-blur-xl">
+          WebGL
         </span>
       </div>
 
-      {/* Refresh button */}
-      <div className="absolute top-2 right-2 z-10">
+      {/* Refresh — top-right */}
+      <div className="absolute top-2.5 right-2.5 z-10">
         <button
           onClick={refreshHealth}
-          className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-zinc-800/60 text-zinc-500 border border-zinc-700/30 backdrop-blur-xl hover:text-zinc-300 hover:border-purple-500/30 transition-all"
+          className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/3 text-zinc-500 border border-white/5 backdrop-blur-xl hover:text-violet-300 hover:border-violet-500/20 transition-all"
         >
-          ↻ Refresh
+          ↻
         </button>
       </div>
 
-      {/* WebGL Graph */}
+      {/* WebGL 3D Graph */}
       <GraphCanvas
         ref={graphRef}
         nodes={graphNodes}
         edges={graphEdges}
-        theme={ssvTheme}
-        layoutType="forceDirected3d"
+        theme={ssvDarkTheme}
+        layoutType="forceDirected2d"
         layoutOverrides={{
-          linkDistance: 120,
-          nodeStrength: -200,
+          linkDistance: 80,
+          nodeStrength: -180,
         }}
-        labelType="auto"
+        labelType="all"
         edgeArrowPosition="end"
         animated={true}
         draggable={true}
-        defaultNodeSize={8}
-        minNodeSize={5}
-        maxNodeSize={16}
-        cameraMode="rotate"
+        defaultNodeSize={3}
+        minNodeSize={2}
+        maxNodeSize={6}
+        cameraMode="pan"
         actives={actives}
         onNodePointerOver={handleNodeHover}
         onNodePointerOut={handleNodeUnhover}
         onCanvasClick={handleCanvasClick}
       />
 
-      {/* Hover tooltip */}
+      {/* Hover tooltip — bottom-center */}
       {hoveredNode && (
-        <div className="absolute bottom-14 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
-          <div className="px-3 py-2 rounded-lg bg-zinc-900/90 backdrop-blur-xl border border-zinc-700/40 shadow-2xl shadow-black/40">
-            <div className="text-[11px] font-mono text-zinc-200 truncate">{hoveredNode.label}</div>
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+          <div className="px-3 py-1.5 rounded-lg bg-black/70 backdrop-blur-xl border border-white/8 shadow-2xl">
+            <div className="text-[11px] font-mono text-zinc-200">{hoveredNode.label}</div>
             {hoveredNode.sub && (
-              <div className="text-[10px] font-mono text-zinc-500 mt-0.5">{hoveredNode.sub}</div>
+              <div className="text-[9px] font-mono text-zinc-500 mt-0.5">{hoveredNode.sub}</div>
             )}
           </div>
         </div>
       )}
 
-      {/* Legend */}
-      <div className="absolute bottom-2 right-2 z-10">
-        <div className="px-2.5 py-1.5 rounded-lg bg-zinc-900/70 backdrop-blur-xl border border-zinc-700/20">
-          <div className="flex items-center gap-3 text-[9px] font-mono text-zinc-600">
-            <span className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />healthy
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />degraded
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-400" />offline
-            </span>
-          </div>
+      {/* Legend — bottom-right */}
+      <div className="absolute bottom-2 right-2.5 z-10">
+        <div className="flex items-center gap-2.5 px-2.5 py-1 rounded-full bg-black/30 backdrop-blur-xl border border-white/4">
+          <span className="flex items-center gap-1 text-[8px] font-mono text-zinc-600">
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: STATUS_FILLS.healthy }} />online
+          </span>
+          <span className="flex items-center gap-1 text-[8px] font-mono text-zinc-600">
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: STATUS_FILLS.degraded }} />degraded
+          </span>
+          <span className="flex items-center gap-1 text-[8px] font-mono text-zinc-600">
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: STATUS_FILLS.offline }} />offline
+          </span>
         </div>
       </div>
 
-      {/* Controls hint */}
-      <div className="absolute bottom-2 left-2 z-10">
-        <span className="text-[9px] font-mono text-zinc-700 pointer-events-none">
-          drag to rotate · scroll to zoom · click node ↗
+      {/* Controls hint — bottom-left */}
+      <div className="absolute bottom-2 left-2.5 z-10">
+        <span className="text-[8px] font-mono text-zinc-700/50 pointer-events-none select-none">
+          drag · scroll · hover
         </span>
       </div>
     </div>

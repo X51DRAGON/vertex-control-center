@@ -53,6 +53,7 @@ import { OpsScoreboard } from './ops-scoreboard'
 import { MissionStatus } from './mission-status'
 import { DailyDigest } from './daily-digest'
 import { ActivityHeatmap } from './activity-heatmap'
+import { CouncilInsights } from './council-insights'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -728,6 +729,12 @@ export function Dashboard() {
         <section className="rounded-xl border border-border bg-card overflow-hidden">
           <div className="p-3">
             <SafetyRails />
+          </div>
+        </section>
+
+        <section className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="p-3">
+            <CouncilInsights />
           </div>
         </section>
 

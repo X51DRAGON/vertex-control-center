@@ -140,6 +140,21 @@ export default function Home() {
     }
   }, [initSteps, bootComplete, setBootComplete])
 
+  // ═══════════════════════════════════════════════════════════
+  //  ⏱️  SAFETY TIMEOUT — Force boot after 5 seconds
+  //  Prevents the loading overlay from blocking the dashboard
+  //  when API calls fail or hang (common in local/offline mode)
+  // ═══════════════════════════════════════════════════════════
+  useEffect(() => {
+    if (bootComplete) return
+    const safetyTimeout = setTimeout(() => {
+      console.warn('[VCC] Boot safety timeout — forcing dashboard load after 5s')
+      STEP_KEYS.forEach(key => markStep(key))
+    }, 5000)
+    return () => clearTimeout(safetyTimeout)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bootComplete])
+
   // Security console warning (anti-self-XSS)
   useEffect(() => {
     if (!bootComplete) return
@@ -307,30 +322,10 @@ export default function Home() {
         connectWithEnvFallback()
       })
 
-    // Check onboarding state
-    fetch('/api/onboarding')
-      .then(res => res.ok ? res.json() : null)
-      .then(data => {
-        const decision = getOnboardingSessionDecision({
-          isAdmin: data?.isAdmin === true,
-          serverShowOnboarding: data?.showOnboarding === true,
-          completed: data?.completed === true,
-          skipped: data?.skipped === true,
-          dismissedThisSession: readOnboardingDismissedThisSession(),
-        })
-
-        if (decision.shouldOpen) {
-          clearOnboardingDismissedThisSession()
-          if (decision.replayFromStart) {
-            markOnboardingReplayFromStart()
-          } else {
-            clearOnboardingReplayFromStart()
-          }
-          setShowOnboarding(true)
-        }
-        markStep('config')
-      })
-      .catch(() => { markStep('config') })
+    // Onboarding: disabled for VCC local deployment (we don't use the gateway wizard)
+    // The original Mission Control onboarding would hang in local mode, causing
+    // the dashboard to be stuck behind a blurred overlay with no way to dismiss.
+    markStep('config')
     // Preload workspace data in parallel
     Promise.allSettled([
       fetch('/api/agents')

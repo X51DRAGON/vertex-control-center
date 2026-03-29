@@ -94,9 +94,15 @@ export function OnboardingWizard() {
           if (shouldReplayFromStart) {
             clearOnboardingReplayFromStart()
           }
+        } else {
+          // API returned non-OK — dismiss onboarding so dashboard isn't stuck
+          setShowOnboarding(false)
         }
       })
-      .catch(() => {})
+      .catch(() => {
+        // API unreachable — dismiss onboarding so dashboard isn't stuck
+        setShowOnboarding(false)
+      })
 
     // Fetch system capabilities in parallel
     Promise.allSettled([

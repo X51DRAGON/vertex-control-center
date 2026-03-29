@@ -9,7 +9,7 @@ Monitor, command, approve, and observe your AI operations platform from a single
 [![Next.js 16](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)](https://typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![PRs](https://img.shields.io/badge/PRs-48%20merged-blueviolet)]()
+[![PRs](https://img.shields.io/badge/PRs-49%20merged-blueviolet)]()
 
 </div>
 
@@ -25,7 +25,7 @@ Vertex Control Center is the client-facing operations dashboard for **Silver Sno
 |---------|-------------|
 | 📊 **Command Bar** | Animated KPI strip — health gauge, 6 counters, pulsing LIVE indicator |
 | 🧠 **Amy Intelligence** | Bridge health, system components, neural pipeline, knowledge search |
-| 🗺️ **System Topology** | Live 6-node architecture diagram with health-colored status dots |
+| 🗺️ **System Topology** | Interactive React Flow network graph — 10 nodes, hub-and-spoke layout, purple edge lines, click-to-detail |
 | 🎯 **Quick Actions** | 6 one-click operations: health check, neural sync, approve/reject |
 | ⏰ **Scheduler** | 7 recurring automations with real schedules, last run results |
 | 📧 **Email Lane** | IMAP watcher status, draft/outbox counts, recent log |
@@ -187,7 +187,7 @@ See `vertex-deploy.py` for the full 10-step automated provisioning pipeline.
 | `config-viewer.tsx` | Platform configuration | 108 |
 | `dependency-map.tsx` | Module import graph | 107 |
 | `network-pulse.tsx` | Port scan + latency | 98 |
-| `reagraph-topology.tsx` | Interactive 3D WebGL topology (Reagraph) | 290 |
+| `reagraph-topology.tsx` | Interactive React Flow topology with edges | 460 |
 | `status/page.tsx` | Public health status page | 287 |
 | `api/amy/chat/route.ts` | Ollama chat + RAG | 195 |
 | `api/amy/stream/route.ts` | SSE streaming endpoint | 181 |

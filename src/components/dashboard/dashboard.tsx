@@ -36,6 +36,8 @@ import { StorageMonitor } from './storage-monitor'
 import { ModelRegistry } from './model-registry'
 import { CronTimeline } from './cron-timeline'
 import { ErrorTracker } from './error-tracker'
+import { GitPulse } from './git-pulse'
+import { UptimeMonitor } from './uptime-monitor'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -620,6 +622,31 @@ export function Dashboard() {
           </div>
           <div className="p-3">
             <ErrorTracker />
+          </div>
+        </section>
+      </div>
+
+      {/* Git Pulse + Uptime */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <section className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+            <span className="text-sm">💻</span>
+            <h3 className="text-sm font-semibold text-foreground">Git Pulse</h3>
+            <span className="text-[10px] text-muted-foreground/40">Repository activity</span>
+          </div>
+          <div className="p-3">
+            <GitPulse />
+          </div>
+        </section>
+
+        <section className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+            <span className="text-sm">🟢</span>
+            <h3 className="text-sm font-semibold text-foreground">Uptime Monitor</h3>
+            <span className="text-[10px] text-muted-foreground/40">Service availability</span>
+          </div>
+          <div className="p-3">
+            <UptimeMonitor />
           </div>
         </section>
       </div>

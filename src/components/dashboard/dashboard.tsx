@@ -26,6 +26,8 @@ import { CapabilityMatrix } from './capability-matrix'
 import { DecisionLog } from './decision-log'
 import { SessionAnalytics } from './session-analytics'
 import { DashboardFooter } from './dashboard-footer'
+import { AuditTrail } from './audit-trail'
+import { TelegramMonitor } from './telegram-monitor'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -485,6 +487,31 @@ export function Dashboard() {
           </div>
           <div className="p-3">
             <DecisionLog />
+          </div>
+        </section>
+      </div>
+
+      {/* Audit Trail + Telegram Monitor */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <section className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+            <span className="text-sm">🛡️</span>
+            <h3 className="text-sm font-semibold text-foreground">Audit Trail</h3>
+            <span className="text-[10px] text-muted-foreground/40">Governance events</span>
+          </div>
+          <div className="p-3">
+            <AuditTrail />
+          </div>
+        </section>
+
+        <section className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+            <span className="text-sm">✈️</span>
+            <h3 className="text-sm font-semibold text-foreground">Telegram Monitor</h3>
+            <span className="text-[10px] text-muted-foreground/40">Bot sessions + messages</span>
+          </div>
+          <div className="p-3">
+            <TelegramMonitor />
           </div>
         </section>
       </div>

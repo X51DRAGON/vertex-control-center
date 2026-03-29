@@ -58,6 +58,7 @@ import { SectionNav } from './section-nav'
 import { DashboardZone } from './dashboard-zone'
 import { OpsReportBuilder } from './ops-report-builder'
 import { AlertRules } from './alert-rules'
+import { ServiceStatus } from './service-status'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -426,6 +427,13 @@ export function Dashboard() {
       <section className="rounded-xl border border-border bg-card overflow-hidden">
         <div className="p-4">
           <AlertRules />
+        </div>
+      </section>
+
+      {/* HERO 9: Service Status */}
+      <section className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="p-4">
+          <ServiceStatus />
         </div>
       </section>
 

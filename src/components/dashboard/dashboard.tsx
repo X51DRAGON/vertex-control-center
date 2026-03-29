@@ -61,6 +61,7 @@ import { AlertRules } from './alert-rules'
 import { ServiceStatus } from './service-status'
 import { UptimeClock } from './uptime-clock'
 import { EventTimeline } from './event-timeline'
+import { ResourceMonitor } from './resource-monitor'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -455,6 +456,13 @@ export function Dashboard() {
       <section className="rounded-xl border border-border bg-card overflow-hidden">
         <div className="p-4">
           <EventTimeline />
+        </div>
+      </section>
+
+      {/* HERO 12: Resource Monitor */}
+      <section className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="p-4">
+          <ResourceMonitor />
         </div>
       </section>
 

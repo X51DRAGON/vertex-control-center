@@ -5,6 +5,7 @@ import {
   ReactFlow,
   Node,
   Edge,
+  Handle,
   useNodesState,
   useEdgesState,
   Controls,
@@ -94,6 +95,12 @@ function TopologyNodeComponent({ data }: { data: any }) {
       className="flex flex-col items-center gap-1.5 cursor-pointer group"
       onClick={() => nodeData.onClick?.(nodeData)}
     >
+      {/* ── Connection handles (invisible but needed for edge lines) ── */}
+      <Handle type="target" position={Position.Top} className="!bg-transparent !border-0 !w-0 !h-0" />
+      <Handle type="source" position={Position.Bottom} className="!bg-transparent !border-0 !w-0 !h-0" />
+      <Handle type="target" position={Position.Left} id="left" className="!bg-transparent !border-0 !w-0 !h-0" />
+      <Handle type="source" position={Position.Right} id="right" className="!bg-transparent !border-0 !w-0 !h-0" />
+
       {/* Glowing icon circle */}
       <div
         className={`relative flex items-center justify-center rounded-full transition-all duration-300 group-hover:scale-110 ${
@@ -136,23 +143,31 @@ function TopologyNodeComponent({ data }: { data: any }) {
 const nodeTypes = { topology: TopologyNodeComponent }
 
 // ═══════════════════════════════════════════════════════════
-//  📐  NODE POSITIONS — Where each node sits on the canvas
+//  📐  NODE POSITIONS — Hub-and-spoke radial layout
 //
-//  x, y are pixel positions. The canvas is ~560 x 340.
-//  Change these to rearrange the layout!
+//  🌉 Bridge sits at the CENTER (the hub)
+//  Core nodes form an inner ring around Bridge
+//  Service/module nodes form an outer ring
+//
+//  x, y are pixel positions. Adjust to taste!
 // ═══════════════════════════════════════════════════════════
 
 const NODE_POSITIONS: Record<string, { x: number; y: number }> = {
-  bridge:    { x: 240, y: 130 },   // 🌉 CENTER — the hub
-  dashboard: { x: 240, y: 0 },     // 🖥️ Top center
-  ollama:    { x: 60,  y: 80 },    // 🧠 Left
-  vault:     { x: 420, y: 80 },    // 🏛️ Right
-  engines:   { x: 120, y: 240 },   // ⚙️ Bottom-left
-  scheduler: { x: 350, y: 240 },   // ⏰ Bottom-right
-  proxy:     { x: 0,   y: 180 },   // 🔀 Far left
-  telegram:  { x: 50,  y: 310 },   // 📱 Bottom far-left
-  email:     { x: 430, y: 190 },   // 📧 Far right
-  council:   { x: 300, y: 310 },   // 🏛️ Bottom center-right
+  // ── CENTER HUB ──
+  bridge:    { x: 260, y: 150 },   // 🌉 Amy Bridge — the heart of everything
+
+  // ── INNER RING (Core) — directly connected to Bridge ──
+  dashboard: { x: 260, y: 0 },     // 🖥️ Top — you are here!
+  ollama:    { x: 60,  y: 90 },    // 🧠 Top-left — AI brain
+  vault:     { x: 470, y: 90 },    // 🏛️ Top-right — knowledge store
+
+  // ── OUTER RING (Services & Modules) — orbit around core ──
+  proxy:     { x: 0,   y: 230 },   // 🔀 Left — routes to Ollama
+  engines:   { x: 140, y: 300 },   // ⚙️ Bottom-left — 8 modules
+  council:   { x: 310, y: 330 },   // 🏛️ Bottom-center — 4 advisors
+  scheduler: { x: 470, y: 280 },   // ⏰ Bottom-right — 7 routines
+  email:     { x: 530, y: 180 },   // 📧 Right — email watcher
+  telegram:  { x: 30,  y: 330 },   // 📱 Far bottom-left — bot
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -265,19 +280,21 @@ export function ReagraphTopology() {
       target: e.to,
       label: e.label,
       animated: e.animated,
-      type: 'smoothstep',
+      type: 'default',
       style: {
-        stroke: e.animated ? 'rgba(139, 92, 246, 0.5)' : 'rgba(139, 92, 246, 0.2)',
-        strokeWidth: e.animated ? 2 : 1,
+        stroke: e.animated ? 'rgba(139, 92, 246, 0.7)' : 'rgba(139, 92, 246, 0.35)',
+        strokeWidth: e.animated ? 2.5 : 1.5,
       },
       labelStyle: {
-        fill: 'rgba(161, 161, 170, 0.5)',
+        fill: 'rgba(200, 180, 255, 0.6)',
         fontSize: 8,
         fontFamily: 'ui-monospace, monospace',
       },
       labelBgStyle: {
-        fill: 'rgba(12, 10, 20, 0.8)',
+        fill: 'rgba(12, 10, 20, 0.85)',
+        fillOpacity: 0.85,
       },
+      labelBgPadding: [4, 2] as [number, number],
     }))
 
     setNodes(flowNodes)

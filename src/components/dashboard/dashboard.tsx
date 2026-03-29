@@ -60,6 +60,7 @@ import { OpsReportBuilder } from './ops-report-builder'
 import { AlertRules } from './alert-rules'
 import { ServiceStatus } from './service-status'
 import { UptimeClock } from './uptime-clock'
+import { EventTimeline } from './event-timeline'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -447,6 +448,13 @@ export function Dashboard() {
       <section className="rounded-xl border border-border bg-card overflow-hidden">
         <div className="p-4">
           <QuickActions />
+        </div>
+      </section>
+
+      {/* HERO 11: Event Timeline */}
+      <section className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="p-4">
+          <EventTimeline />
         </div>
       </section>
 

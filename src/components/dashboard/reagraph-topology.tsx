@@ -165,7 +165,7 @@ const NODE_POSITIONS: Record<string, { x: number; y: number }> = {
   proxy:     { x: 0,   y: 230 },   // 🔀 Left — routes to Ollama
   engines:   { x: 140, y: 300 },   // ⚙️ Bottom-left — 8 modules
   council:   { x: 310, y: 330 },   // 🏛️ Bottom-center — 4 advisors
-  scheduler: { x: 470, y: 280 },   // ⏰ Bottom-right — 7 routines
+  scheduler: { x: 470, y: 280 },   // ⏰ Bottom-right — 10 routines
   email:     { x: 530, y: 180 },   // 📧 Right — email watcher
   telegram:  { x: 30,  y: 330 },   // 📱 Far bottom-left — bot
 }
@@ -200,7 +200,7 @@ const INITIAL_NODES: TopologyNodeData[] = [
   { id: 'ollama',    label: 'Ollama LLM',      icon: '🧠', status: 'loading', detail: ':11434',        port: ':11434', tier: 'core',    description: 'Local AI inference engine running 4 models: amy-local, qwen3, llama3.1, nomic-embed-text.' },
   { id: 'vault',     label: 'Sovereign Vault',  icon: '🏛️', status: 'loading', detail: '1.7M+ words',                 tier: 'service', description: 'Amy\'s knowledge store — 1.7M+ words of ingested documents, policies, and context.' },
   { id: 'engines',   label: 'Amy Engines',      icon: '⚙️', status: 'loading', detail: '8 modules',                   tier: 'service', description: '8 autonomous Python modules: intelligence, approval, council, tasks, notifications, scheduler, activity, config.' },
-  { id: 'scheduler', label: 'Scheduler',        icon: '⏰', status: 'loading', detail: '7 routines',                  tier: 'module',  description: '7 recurring routines: health checks, email polling, knowledge sync, and more.' },
+  { id: 'scheduler', label: 'Scheduler',        icon: '⏰', status: 'loading', detail: '10 routines',                  tier: 'module',  description: '10 recurring routines: 7 core (health, email, knowledge, anomaly, council, intelligence, route analysis) + 3 ClawBytes recipes (issue whisperer, task whisperer, inbox whisperer).' },
   { id: 'proxy',     label: 'Amy Proxy',        icon: '🔀', status: 'loading', detail: 'Neural routing',              tier: 'service', description: 'Smart routing layer that directs requests to the best model for each task.' },
   { id: 'telegram',  label: 'Telegram',         icon: '📱', status: 'loading', detail: 'Bot sessions',                tier: 'module',  description: 'Telegram bot integration — chat with Amy directly from Telegram.' },
   { id: 'email',     label: 'Email Lane',       icon: '📧', status: 'loading', detail: 'IMAP watcher',                tier: 'module',  description: 'IMAP email watcher that monitors inboxes and drafts intelligent replies.' },
@@ -239,7 +239,7 @@ export function ReagraphTopology() {
             return { ...node, status: (ollamaService?.status === 'healthy' ? 'healthy' : ollamaService?.status === 'degraded' ? 'degraded' : 'offline') as NodeStatus, detail: ollamaService?.detail || ':11434' }
           case 'vault':     return { ...node, status: 'healthy' as NodeStatus, detail: '1.7M+ words' }
           case 'engines':   return { ...node, status: 'healthy' as NodeStatus, detail: '8 modules' }
-          case 'scheduler': return { ...node, status: 'healthy' as NodeStatus, detail: '7 routines' }
+          case 'scheduler': return { ...node, status: 'healthy' as NodeStatus, detail: '10 routines' }
           case 'proxy':     return { ...node, status: 'healthy' as NodeStatus, detail: 'Neural routing' }
           case 'telegram':  return { ...node, status: 'healthy' as NodeStatus, detail: '6 sessions' }
           case 'email':     return { ...node, status: 'healthy' as NodeStatus, detail: 'IMAP active' }

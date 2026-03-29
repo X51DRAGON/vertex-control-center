@@ -9,7 +9,7 @@ Monitor, command, approve, and observe your AI operations platform from a single
 [![Next.js 16](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)](https://typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![PRs](https://img.shields.io/badge/PRs-46%20merged-blueviolet)]()
+[![PRs](https://img.shields.io/badge/PRs-48%20merged-blueviolet)]()
 
 </div>
 
@@ -187,6 +187,7 @@ See `vertex-deploy.py` for the full 10-step automated provisioning pipeline.
 | `config-viewer.tsx` | Platform configuration | 108 |
 | `dependency-map.tsx` | Module import graph | 107 |
 | `network-pulse.tsx` | Port scan + latency | 98 |
+| `reagraph-topology.tsx` | Interactive 3D WebGL topology (Reagraph) | 290 |
 | `status/page.tsx` | Public health status page | 287 |
 | `api/amy/chat/route.ts` | Ollama chat + RAG | 195 |
 | `api/amy/stream/route.ts` | SSE streaming endpoint | 181 |
@@ -199,10 +200,10 @@ Forked from [builderz-labs/mission-control](https://github.com/builderz-labs/mis
 SSV customizations:
 - Purple theme (h:270) with SSV design tokens
 - Amy AI integration (chat, streaming, RAG)
-- 38 custom dashboard panels
+- 39 custom dashboard panels
 - Public status page
 - Client deployment system
-- 38 bridge API endpoints
+- 39 bridge API endpoints
 
 ---
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import dynamic from 'next/dynamic'
 import { useMissionControl } from '@/store'
 import { useNavigateToPanel } from '@/lib/navigation'
 import { useSmartPoll } from '@/lib/use-smart-poll'
@@ -17,7 +18,11 @@ import { QuickActions } from './quick-actions'
 import { KnowledgeManager } from './knowledge-manager'
 import { CommandBar } from './command-bar'
 import { VaultSearch } from './vault-search'
-import { SystemTopology } from './system-topology'
+// Phase 118: Reagraph dynamic import (WebGL needs browser — no SSR)
+const ReagraphTopology = dynamic(
+  () => import('./reagraph-topology').then(mod => ({ default: mod.ReagraphTopology })),
+  { ssr: false, loading: () => <div className="h-[340px] rounded-lg border border-border/20 bg-gradient-to-b from-surface-1/30 to-transparent flex items-center justify-center"><div className="w-6 h-6 rounded-full border-2 border-purple-400/30 border-t-purple-400 animate-spin" /></div> }
+)
 import { SchedulerPanel } from './scheduler-panel'
 import { IntelligencePanel } from './intelligence-panel'
 import { CouncilChamber } from './council-chamber'
@@ -327,16 +332,16 @@ export function Dashboard() {
         <AmyStatusWidget />
       </section>
 
-      {/* System Topology + Quick Actions */}
+      {/* Interactive 3D Topology + Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <section className="rounded-xl border border-border bg-card overflow-hidden">
           <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">🗺️</span>
+            <span className="text-sm">🌐</span>
             <h3 className="text-sm font-semibold text-foreground">System Topology</h3>
-            <span className="text-[10px] text-muted-foreground/40">Live architecture</span>
+            <span className="text-[10px] text-muted-foreground/40">3D · WebGL · Interactive</span>
           </div>
-          <div className="p-3">
-            <SystemTopology />
+          <div className="p-0">
+            <ReagraphTopology />
           </div>
         </section>
 

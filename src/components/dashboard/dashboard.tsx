@@ -48,6 +48,7 @@ import { ConfigViewer } from './config-viewer'
 import { DependencyMap } from './dependency-map'
 import { NetworkPulse } from './network-pulse'
 import { SafetyRails } from './safety-rails'
+import { ClawBytesRecipes } from './clawbytes-recipes'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -713,6 +714,12 @@ export function Dashboard() {
         <section className="rounded-xl border border-border bg-card overflow-hidden">
           <div className="p-3">
             <SafetyRails />
+          </div>
+        </section>
+
+        <section className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="p-3">
+            <ClawBytesRecipes />
           </div>
         </section>
       </div>

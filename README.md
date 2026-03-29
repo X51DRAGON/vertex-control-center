@@ -99,7 +99,7 @@ See `vertex-deploy.py` for the full 10-step automated provisioning pipeline.
 | Database | SQLite (better-sqlite3, WAL mode) |
 | State | Zustand |
 | AI | Ollama (local LLM) |
-| Bridge | Python REST API (:3100) — 38 endpoints |
+| Bridge | Python REST API (:3100) — 41 endpoints |
 | Streaming | Server-Sent Events (SSE) |
 
 ## Bridge Endpoints
@@ -140,6 +140,8 @@ See `vertex-deploy.py` for the full 10-step automated provisioning pipeline.
 | `/api/config` | GET | Platform configuration overview |
 | `/api/dependencies` | GET | Module dependency graph |
 | `/api/network` | GET | Network port scan + latencies |
+| `/api/safety-rails` | GET | Safety guardrail layers + status |
+| `/api/clawbytes` | GET | ClawBytes automation recipe catalogue |
 | `/api/status` | GET | Full system status |
 
 ## Public Endpoints
@@ -189,6 +191,7 @@ See `vertex-deploy.py` for the full 10-step automated provisioning pipeline.
 | `network-pulse.tsx` | Port scan + latency | 98 |
 | `reagraph-topology.tsx` | Interactive React Flow topology with edges | 460 |
 | `safety-rails.tsx` | 5-layer guardrail visualization panel | 320 |
+| `clawbytes-recipes.tsx` | Automation recipe catalogue from OpenClaw | 301 |
 | `status/page.tsx` | Public health status page | 287 |
 | `api/amy/chat/route.ts` | Ollama chat + RAG | 195 |
 | `api/amy/stream/route.ts` | SSE streaming endpoint | 181 |
@@ -201,10 +204,10 @@ Forked from [builderz-labs/mission-control](https://github.com/builderz-labs/mis
 SSV customizations:
 - Purple theme (h:270) with SSV design tokens
 - Amy AI integration (chat, streaming, RAG)
-- 39 custom dashboard panels
+- 41 custom dashboard panels
 - Public status page
 - Client deployment system
-- 39 bridge API endpoints
+- 41 bridge API endpoints
 
 ---
 

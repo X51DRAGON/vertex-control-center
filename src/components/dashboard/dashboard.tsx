@@ -51,6 +51,7 @@ import { SafetyRails } from './safety-rails'
 import { ClawBytesRecipes } from './clawbytes-recipes'
 import { OpsHeartbeat } from './ops-heartbeat'
 import { OpsScoreboard } from './ops-scoreboard'
+import { MissionStatus } from './mission-status'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -735,6 +736,12 @@ export function Dashboard() {
         <section className="rounded-xl border border-border bg-card overflow-hidden">
           <div className="p-3">
             <OpsScoreboard />
+          </div>
+        </section>
+
+        <section className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="p-3">
+            <MissionStatus />
           </div>
         </section>
       </div>

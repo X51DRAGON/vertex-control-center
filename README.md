@@ -9,7 +9,7 @@ Monitor, command, approve, and observe your AI operations platform from a single
 [![Next.js 16](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)](https://typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![PRs](https://img.shields.io/badge/PRs-62%20merged-blueviolet)]()
+[![PRs](https://img.shields.io/badge/PRs-64%20merged-blueviolet)]()
 
 </div>
 
@@ -99,7 +99,7 @@ See `vertex-deploy.py` for the full 10-step automated provisioning pipeline.
 | Database | SQLite (better-sqlite3, WAL mode) |
 | State | Zustand |
 | AI | Ollama (local LLM) |
-| Bridge | Python REST API (:3100) — 46 endpoints |
+| Bridge | Python REST API (:3100) — 47 endpoints |
 | Streaming | Server-Sent Events (SSE) |
 
 ## Bridge Endpoints
@@ -147,6 +147,7 @@ See `vertex-deploy.py` for the full 10-step automated provisioning pipeline.
 | `/api/mission-status` | GET | Operational readiness scores by category |
 | `/api/daily-digest` | GET | Executive daily summary + highlights |
 | `/api/activity-heatmap` | GET | 30-day activity intensity grid |
+| `/api/council-insights` | GET | Council deliberation stats + advisor patterns |
 | `/api/status` | GET | Full system status |
 
 ## Public Endpoints
@@ -202,6 +203,7 @@ See `vertex-deploy.py` for the full 10-step automated provisioning pipeline.
 | `mission-status.tsx` | Operational readiness pre-flight panel | 217 |
 | `daily-digest.tsx` | Executive daily briefing with narrative | 196 |
 | `activity-heatmap.tsx` | GitHub-style 30-day contribution grid | 187 |
+| `council-insights.tsx` | Multi-model AI council analytics | 217 |
 | `status/page.tsx` | Public health status page | 287 |
 | `api/amy/chat/route.ts` | Ollama chat + RAG | 195 |
 | `api/amy/stream/route.ts` | SSE streaming endpoint | 181 |
@@ -214,10 +216,10 @@ Forked from [builderz-labs/mission-control](https://github.com/builderz-labs/mis
 SSV customizations:
 - Purple theme (h:270) with SSV design tokens
 - Amy AI integration (chat, streaming, RAG)
-- 46 custom dashboard panels
+- 47 custom dashboard panels
 - Public status page
 - Client deployment system
-- 46 bridge API endpoints
+- 47 bridge API endpoints
 
 ---
 

@@ -1,244 +1,182 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 
 /**
- * QuickActions — One-click command buttons for common operations
+ * QuickActions — One-click operational commands
  *
- * Gives operators instant access to critical Amy operations
- * without leaving the dashboard.
+ * Phase 134: Interactive buttons that trigger operations
+ * via POST /api/quick-action
  */
 
-type ActionResult = {
-  id: string
-  status: 'idle' | 'running' | 'success' | 'error'
-  message?: string
+interface ActionResult {
+  action: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any
 }
 
-type Action = {
-  id: string
-  label: string
-  icon: string
-  description: string
-  endpoint: string
-  method: 'GET' | 'POST'
-  color: string
-  confirmText?: string
-}
-
-const ACTIONS: Action[] = [
-  {
-    id: 'health',
-    label: 'Health Check',
-    icon: '💚',
-    description: 'Run full system health scan',
-    endpoint: '/api/amy/health',
-    method: 'GET',
-    color: 'from-emerald-500/20 to-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40',
-  },
-  {
-    id: 'neural-status',
-    label: 'Neural Status',
-    icon: '🧠',
-    description: 'Check neural pipeline sync',
-    endpoint: 'http://127.0.0.1:3100/api/neurals/status',
-    method: 'GET',
-    color: 'from-purple-500/20 to-purple-500/5 border-purple-500/20 hover:border-purple-500/40',
-  },
-  {
-    id: 'intelligence',
-    label: 'Intelligence Report',
-    icon: '📊',
-    description: 'Generate health intelligence',
-    endpoint: 'http://127.0.0.1:3100/api/health',
-    method: 'GET',
-    color: 'from-blue-500/20 to-blue-500/5 border-blue-500/20 hover:border-blue-500/40',
-  },
-  {
-    id: 'approve-neurals',
-    label: 'Approve Neurals',
-    icon: '✅',
-    description: 'Approve pending neural refs',
-    endpoint: 'http://127.0.0.1:3100/api/neurals/approve',
-    method: 'POST',
-    color: 'from-green-500/20 to-green-500/5 border-green-500/20 hover:border-green-500/40',
-    confirmText: 'Approve all pending neural references?',
-  },
-  {
-    id: 'reject-neurals',
-    label: 'Reject Neurals',
-    icon: '❌',
-    description: 'Reject pending neural batch',
-    endpoint: 'http://127.0.0.1:3100/api/neurals/reject',
-    method: 'POST',
-    color: 'from-red-500/20 to-red-500/5 border-red-500/20 hover:border-red-500/40',
-    confirmText: 'Reject all pending neural references?',
-  },
-  {
-    id: 'new-task',
-    label: 'Quick Task',
-    icon: '⚡',
-    description: 'Submit a new task to Amy',
-    endpoint: 'http://127.0.0.1:3100/api/tasks',
-    method: 'POST',
-    color: 'from-amber-500/20 to-amber-500/5 border-amber-500/20 hover:border-amber-500/40',
-  },
+const actions = [
+  { id: 'health-check',   icon: '🩺', label: 'Health Check',    desc: 'Probe all services' },
+  { id: 'bridge-ping',    icon: '🏓', label: 'Ping Bridge',     desc: 'Bridge connectivity' },
+  { id: 'log-summary',    icon: '📊', label: 'Log Summary',     desc: 'Log file sizes' },
+  { id: 'system-snapshot', icon: '💾', label: 'System Snapshot', desc: 'Disk + log volume' },
+  { id: 'clear-old-logs', icon: '🧹', label: 'Check Large Logs', desc: 'Find logs > 10MB' },
 ]
 
 export function QuickActions() {
-  const [results, setResults] = useState<Record<string, ActionResult>>({})
-  const [taskInput, setTaskInput] = useState('')
-  const [showTaskInput, setShowTaskInput] = useState(false)
+  const [loading, setLoading] = useState<string | null>(null)
+  const [result, setResult] = useState<ActionResult | null>(null)
+  const [lastAction, setLastAction] = useState<string | null>(null)
 
-  const executeAction = useCallback(async (action: Action) => {
-    // Handle confirmation
-    if (action.confirmText && !window.confirm(action.confirmText)) return
-
-    // Handle quick task input
-    if (action.id === 'new-task') {
-      setShowTaskInput(true)
-      return
-    }
-
-    setResults(prev => ({ ...prev, [action.id]: { id: action.id, status: 'running' } }))
-
+  const runAction = async (actionId: string) => {
+    setLoading(actionId)
+    setResult(null)
     try {
-      const res = await fetch(action.endpoint, {
-        method: action.method,
-        headers: action.method === 'POST' ? { 'Content-Type': 'application/json' } : {},
-      })
-
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
-
-      const data = await res.json()
-
-      // Extract a meaningful summary
-      let message = 'Done'
-      if (action.id === 'health') {
-        message = `Score: ${data.score}% — ${data.services?.filter((s: any) => s.status === 'healthy').length}/${data.services?.length} healthy`
-      } else if (action.id === 'intelligence') {
-        const comps = Object.entries(data.components || {})
-        const healthyCount = comps.filter(([, c]: [string, any]) => c.status === 'healthy').length
-        message = `${healthyCount}/${comps.length} components healthy`
-      } else if (action.id === 'neural-status') {
-        message = typeof data === 'string' ? data.slice(0, 80) : JSON.stringify(data).slice(0, 80)
-      } else if (data.result) {
-        message = String(data.result).slice(0, 80)
-      } else if (data.output) {
-        message = String(data.output).slice(0, 80)
-      }
-
-      setResults(prev => ({ ...prev, [action.id]: { id: action.id, status: 'success', message } }))
-    } catch (err) {
-      setResults(prev => ({
-        ...prev,
-        [action.id]: { id: action.id, status: 'error', message: err instanceof Error ? err.message : 'Failed' },
-      }))
-    }
-
-    // Clear result after 8 seconds
-    setTimeout(() => {
-      setResults(prev => {
-        const next = { ...prev }
-        delete next[action.id]
-        return next
-      })
-    }, 8000)
-  }, [])
-
-  const submitTask = async () => {
-    const description = taskInput.trim()
-    if (!description) return
-
-    setResults(prev => ({ ...prev, 'new-task': { id: 'new-task', status: 'running' } }))
-    setShowTaskInput(false)
-    setTaskInput('')
-
-    try {
-      const res = await fetch('http://127.0.0.1:3100/api/tasks', {
+      const res = await fetch('http://127.0.0.1:3100/api/quick-action', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description }),
+        body: JSON.stringify({ action: actionId }),
       })
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
-      setResults(prev => ({ ...prev, 'new-task': { id: 'new-task', status: 'success', message: `Submitted: ${description.slice(0, 50)}` } }))
-    } catch (err) {
-      setResults(prev => ({ ...prev, 'new-task': { id: 'new-task', status: 'error', message: 'Failed' } }))
+      setResult(data)
+      setLastAction(actionId)
+    } catch {
+      setResult({ action: actionId, error: 'Bridge unreachable' })
+    } finally {
+      setLoading(null)
+    }
+  }
+
+  const renderResult = () => {
+    if (!result) return null
+
+    if (result.error) {
+      return <div className="text-red-400 text-xs">⚠️ {result.error}</div>
     }
 
-    setTimeout(() => setResults(prev => { const n = { ...prev }; delete n['new-task']; return n }), 8000)
+    switch (result.action) {
+      case 'health-check':
+        return (
+          <div className="grid grid-cols-3 gap-1.5">
+            {Object.entries(result.result || {}).map(([name, status]) => (
+              <div key={name} className="flex items-center gap-1.5 text-[11px]">
+                <span className={`w-1.5 h-1.5 rounded-full ${
+                  status === 'up' || status === 'active' ? 'bg-emerald-500' :
+                  status === 'idle' ? 'bg-amber-500' : 'bg-red-500'
+                }`} />
+                <span className="text-muted-foreground/70">{name}</span>
+                <span className={`font-mono text-[10px] ${
+                  status === 'up' || status === 'active' ? 'text-emerald-400' :
+                  status === 'idle' ? 'text-amber-400' : 'text-red-400'
+                }`}>{String(status)}</span>
+              </div>
+            ))}
+          </div>
+        )
+      case 'bridge-ping':
+        return (
+          <div className="flex items-center gap-2 text-xs">
+            <span className="text-emerald-400">🏓 PONG!</span>
+            <span className="text-muted-foreground/50">{result.uptime_info}</span>
+          </div>
+        )
+      case 'log-summary':
+        return (
+          <div className="grid grid-cols-2 gap-1">
+            {Object.entries(result.logs || {}).map(([name, info]) => (
+              <div key={name} className="flex justify-between text-[10px] font-mono">
+                <span className="text-muted-foreground/60 truncate">{name}</span>
+                <span className="text-foreground/70">{(info as {human: string}).human}</span>
+              </div>
+            ))}
+          </div>
+        )
+      case 'system-snapshot':
+        return (
+          <div className="flex items-center gap-4 text-xs">
+            <span>💾 Disk: <strong className="text-foreground">{result.disk_usage_pct}%</strong></span>
+            <span>📝 Logs: <strong className="text-foreground">{(result.total_log_lines || 0).toLocaleString()}</strong> lines</span>
+          </div>
+        )
+      case 'clear-old-logs':
+        return (
+          <div className="text-xs">
+            {result.count === 0 ? (
+              <span className="text-emerald-400">✅ No large logs found (all &lt; 10MB)</span>
+            ) : (
+              <div>
+                <span className="text-amber-400">⚠️ {result.count} large files:</span>
+                {(result.large_files || []).map((f: {file: string; size_mb: number}) => (
+                  <div key={f.file} className="text-[10px] font-mono text-muted-foreground/60 ml-4">
+                    {f.file}: {f.size_mb}MB
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )
+      default:
+        return <pre className="text-[10px] text-muted-foreground/50 font-mono">{JSON.stringify(result, null, 2)}</pre>
+    }
   }
 
   return (
-    <div className="space-y-2">
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-        {ACTIONS.map(action => {
-          const result = results[action.id]
-          const isRunning = result?.status === 'running'
-
-          return (
-            <button
-              key={action.id}
-              onClick={() => executeAction(action)}
-              disabled={isRunning}
-              className={`relative rounded-lg border bg-gradient-to-br ${action.color} px-3 py-2.5 text-left transition-all duration-200 disabled:opacity-50 group`}
-            >
-              <div className="flex items-center gap-2">
-                <span className="text-base">{action.icon}</span>
-                <div className="min-w-0">
-                  <div className="text-[11px] font-medium text-foreground truncate">{action.label}</div>
-                  <div className="text-[9px] text-muted-foreground/50 truncate">{action.description}</div>
-                </div>
-              </div>
-
-              {/* Result overlay */}
-              {result && result.status !== 'idle' && (
-                <div className={`absolute inset-0 rounded-lg flex items-center justify-center px-2 backdrop-blur-sm ${
-                  result.status === 'running' ? 'bg-background/60' :
-                  result.status === 'success' ? 'bg-green-500/10' :
-                  'bg-red-500/10'
-                }`}>
-                  {result.status === 'running' ? (
-                    <span className="text-[10px] text-muted-foreground animate-pulse">Running...</span>
-                  ) : (
-                    <span className={`text-[10px] ${result.status === 'success' ? 'text-green-400' : 'text-red-400'} line-clamp-2`}>
-                      {result.message}
-                    </span>
-                  )}
-                </div>
-              )}
-            </button>
-          )
-        })}
+    <div className="space-y-3">
+      {/* Header */}
+      <div className="flex items-center gap-2">
+        <span className="text-lg">⚡</span>
+        <h3 className="text-sm font-semibold text-foreground">Quick Actions</h3>
+        <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-cyan-500/15 text-cyan-300">
+          interactive
+        </span>
       </div>
 
-      {/* Quick task input */}
-      {showTaskInput && (
-        <div className="flex gap-2 mt-2 animate-in fade-in duration-200">
-          <input
-            value={taskInput}
-            onChange={e => setTaskInput(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter') submitTask(); if (e.key === 'Escape') setShowTaskInput(false) }}
-            placeholder="Describe the task..."
-            autoFocus
-            className="flex-1 rounded-md border border-border/40 bg-surface-1 px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
-          />
+      {/* Action Buttons */}
+      <div className="flex flex-wrap gap-2">
+        {actions.map((action) => (
           <button
-            onClick={submitTask}
-            disabled={!taskInput.trim()}
-            className="rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-40"
+            key={action.id}
+            onClick={() => runAction(action.id)}
+            disabled={loading !== null}
+            className={`group px-3 py-2 rounded-lg border transition-all text-left ${
+              loading === action.id
+                ? 'bg-cyan-500/10 border-cyan-500/30 cursor-wait'
+                : lastAction === action.id && result
+                ? 'bg-cyan-500/8 border-cyan-500/20'
+                : 'bg-surface-1/30 border-border/20 hover:bg-cyan-500/10 hover:border-cyan-500/30 cursor-pointer hover:scale-[1.02]'
+            }`}
           >
-            Send
+            <div className="flex items-center gap-1.5">
+              {loading === action.id ? (
+                <span className="w-3 h-3 rounded-full border-2 border-cyan-400/30 border-t-cyan-400 animate-spin" />
+              ) : (
+                <span className="text-sm">{action.icon}</span>
+              )}
+              <span className="text-xs font-medium text-foreground/90">{action.label}</span>
+            </div>
+            <div className="text-[9px] text-muted-foreground/40 mt-0.5">{action.desc}</div>
           </button>
-          <button
-            onClick={() => setShowTaskInput(false)}
-            className="text-xs text-muted-foreground/40 hover:text-muted-foreground px-2"
-          >
-            ✕
-          </button>
+        ))}
+      </div>
+
+      {/* Result Panel */}
+      {result && (
+        <div className="p-3 rounded-lg bg-surface-1/30 border border-cyan-500/15">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[10px] font-mono text-cyan-400/70">
+              {result.action} · {result.timestamp ? new Date(result.timestamp).toLocaleTimeString() : ''}
+            </span>
+          </div>
+          {renderResult()}
         </div>
       )}
+
+      {/* Tip */}
+      <div className="px-3 py-1.5 rounded bg-surface-1/20 border border-border/10">
+        <p className="text-[10px] text-muted-foreground/50 italic">
+          💡 Click any action to execute it instantly. Results appear below. Safe operations only — no destructive actions.
+        </p>
+      </div>
     </div>
   )
 }

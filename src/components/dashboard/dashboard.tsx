@@ -437,6 +437,13 @@ export function Dashboard() {
         </div>
       </section>
 
+      {/* HERO 10: Quick Actions */}
+      <section className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="p-4">
+          <QuickActions />
+        </div>
+      </section>
+
       {/* ═══════════════════════════════════════════════════
           ZONE DRAWERS — Everything else, organized
           Collapsed by default, click to explore

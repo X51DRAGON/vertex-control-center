@@ -50,6 +50,7 @@ import { NetworkPulse } from './network-pulse'
 import { SafetyRails } from './safety-rails'
 import { ClawBytesRecipes } from './clawbytes-recipes'
 import { OpsHeartbeat } from './ops-heartbeat'
+import { OpsScoreboard } from './ops-scoreboard'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -728,6 +729,12 @@ export function Dashboard() {
         <section className="rounded-xl border border-border bg-card overflow-hidden">
           <div className="p-3">
             <ClawBytesRecipes />
+          </div>
+        </section>
+
+        <section className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="p-3">
+            <OpsScoreboard />
           </div>
         </section>
       </div>

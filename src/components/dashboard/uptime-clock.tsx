@@ -20,8 +20,8 @@ export function UptimeClock() {
         const res = await fetch('http://127.0.0.1:3100/api/uptime')
         const data = await res.json()
         setStartTime(data.bridge_started)
-        setSystemAge(data.system_age)
-        setElapsed(data.uptime_seconds)
+        setSystemAge(data.systemUptime || null)
+        setElapsed(data.uptime_seconds || 0)
       } catch {
         // silent
       }

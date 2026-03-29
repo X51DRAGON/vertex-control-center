@@ -55,6 +55,7 @@ import { DailyDigest } from './daily-digest'
 import { ActivityHeatmap } from './activity-heatmap'
 import { CouncilInsights } from './council-insights'
 import { SectionNav } from './section-nav'
+import { DashboardZone } from './dashboard-zone'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -312,7 +313,15 @@ export function Dashboard() {
     <div className="p-5 space-y-4">
       <SectionNav />
       <OnboardingChecklistWidget />
+
+      {/* ═══════════════════════════════════════════════════
+          HERO SECTION — The 5 most important panels
+          Always visible, full-width, with tips
+          ═══════════════════════════════════════════════════ */}
+
       <div id="section-command" />
+
+      {/* HERO 1: Gateway Control Plane (compact) */}
       <section className="rounded-xl border border-border bg-card p-4">
         <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
           <div>
@@ -338,434 +347,422 @@ export function Dashboard() {
       {/* Command Bar — KPI Strip */}
       <CommandBar />
 
-      <section className="rounded-xl border border-border bg-card p-4">
-        <AmyStatusWidget />
-      </section>
-
-      {/* Ops Heartbeat — Live Pulse Monitor */}
+      {/* HERO 2: Amy's Health — Heartbeat */}
       <div id="section-pulse" />
       <section className="rounded-xl border border-border bg-card overflow-hidden">
         <div className="p-3">
           <OpsHeartbeat />
         </div>
+        <div className="px-5 py-2 border-t border-border/20 bg-surface-1/30">
+          <p className="text-[11px] text-muted-foreground/60 italic">
+            💡 This shows Amy&apos;s real-time pulse. The mood adapts to activity — 🔥 means she&apos;s busy, 🟢 means active, 😴 means quiet. The ECG bars animate with live data.
+          </p>
+        </div>
       </section>
 
-      {/* Daily Digest — Executive Briefing */}
+      {/* HERO 3: Daily Digest — What Amy Did Today */}
       <section className="rounded-xl border border-border bg-card overflow-hidden">
         <div className="p-3">
           <DailyDigest />
         </div>
-      </section>
-
-      {/* Activity Heatmap — 30-day contribution grid */}
-      <section className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="p-3">
-          <ActivityHeatmap />
+        <div className="px-5 py-2 border-t border-border/20 bg-surface-1/30">
+          <p className="text-[11px] text-muted-foreground/60 italic">
+            💡 Amy&apos;s day summarized in natural language. The 👑 crown marks the busiest channel. Health badge shows overall error status.
+          </p>
         </div>
       </section>
 
-      {/* Interactive 3D Topology + Quick Actions */}
+      {/* HERO 4: System Topology — How Everything Connects */}
       <div id="section-topology" />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">🌐</span>
-            <h3 className="text-sm font-semibold text-foreground">System Topology</h3>
-            <span className="text-[10px] text-muted-foreground/40">3D · WebGL · Interactive</span>
-          </div>
-          <div className="p-0">
-            <ReagraphTopology />
-          </div>
-        </section>
+      <section className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+          <span className="text-sm">🌐</span>
+          <h3 className="text-sm font-semibold text-foreground">System Topology</h3>
+          <span className="text-[10px] text-muted-foreground/40">3D · WebGL · Interactive</span>
+        </div>
+        <div className="p-0">
+          <ReagraphTopology />
+        </div>
+        <div className="px-5 py-2 border-t border-border/20 bg-surface-1/30">
+          <p className="text-[11px] text-muted-foreground/60 italic">
+            💡 Interactive 3D map of Amy&apos;s architecture. Green nodes = healthy, red = issues. Click any node for details. Drag to rotate.
+          </p>
+        </div>
+      </section>
 
-        {/* Quick Actions */}
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">🎯</span>
-            <h3 className="text-sm font-semibold text-foreground">Quick Actions</h3>
-            <span className="text-[10px] text-muted-foreground/40">One-click operations</span>
-          </div>
-          <div className="p-3">
-            <QuickActions />
-          </div>
-        </section>
-      </div>
+      {/* HERO 5: Sister Nodes — The AI Council */}
+      <div id="section-governance" />
+      <section className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="p-3">
+          <CouncilInsights />
+        </div>
+        <div className="px-5 py-2 border-t border-border/20 bg-surface-1/30">
+          <p className="text-[11px] text-muted-foreground/60 italic">
+            💡 Amy&apos;s 4 AI advisors: 🌸 Aureline (GPT-4o, cautious), 🔥 Ember (Grok, bold), 💎 Aether (Gemini, methodical), 🌊 Noah (Claude, balanced). They vote on strategic decisions.
+          </p>
+        </div>
+      </section>
 
-      {/* Scheduler + Council Chamber */}
+      {/* HERO 6: Amy Intelligence (full width) */}
+      <section className="rounded-xl border border-border bg-card p-4">
+        <AmyStatusWidget />
+        <div className="mt-3 pt-2 border-t border-border/20">
+          <p className="text-[11px] text-muted-foreground/60 italic">
+            💡 Amy&apos;s brain: health score, active tasks, pending approvals, neural refs. Use the Knowledge Search below to ask Amy anything from her vault.
+          </p>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════
+          ZONE DRAWERS — Everything else, organized
+          Collapsed by default, click to explore
+          ═══════════════════════════════════════════════════ */}
+
+      {/* Zone: Operations */}
       <div id="section-operations" />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <DashboardZone
+        id="zone-operations"
+        icon="⚙️"
+        title="Operations"
+        description="Scheduler, automation routines, activity stream, task queue, and approval workflows"
+        panelCount={7}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">⏰</span>
+              <h3 className="text-sm font-semibold text-foreground">Automation Scheduler</h3>
+              <span className="text-[10px] text-muted-foreground/40">Amy&apos;s routines</span>
+            </div>
+            <div className="p-3"><SchedulerPanel /></div>
+          </section>
+
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">🏛️</span>
+              <h3 className="text-sm font-semibold text-foreground">Council Chamber</h3>
+              <span className="text-[10px] text-muted-foreground/40">Multi-model decisions</span>
+            </div>
+            <div className="p-3"><CouncilChamber /></div>
+          </section>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">⚡</span>
+              <h3 className="text-sm font-semibold text-foreground">Activity Stream</h3>
+              <span className="text-[10px] text-muted-foreground/40">Live from Amy engines</span>
+            </div>
+            <div className="h-[400px]"><ActivityFeed /></div>
+          </section>
+
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">📋</span>
+              <h3 className="text-sm font-semibold text-foreground">Task Queue</h3>
+              <span className="text-[10px] text-muted-foreground/40">Command & Control</span>
+            </div>
+            <div className="h-[400px]"><TaskBoard /></div>
+          </section>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">🔐</span>
+              <h3 className="text-sm font-semibold text-foreground">Approval Gate</h3>
+              <span className="text-[10px] text-muted-foreground/40">Human-in-the-loop</span>
+            </div>
+            <div className="h-[320px]"><ApprovalGate /></div>
+          </section>
+
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">🎯</span>
+              <h3 className="text-sm font-semibold text-foreground">Quick Actions</h3>
+              <span className="text-[10px] text-muted-foreground/40">One-click operations</span>
+            </div>
+            <div className="p-3"><QuickActions /></div>
+          </section>
+        </div>
+
+        <IntelligencePanel />
+      </DashboardZone>
+
+      {/* Zone: Analytics */}
+      <DashboardZone
+        id="zone-analytics"
+        icon="📊"
+        title="Analytics & Performance"
+        description="Scoreboard, mission readiness, activity heatmap, session analytics, and capability tracking"
+        panelCount={6}
+      >
         <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">⏰</span>
-            <h3 className="text-sm font-semibold text-foreground">Automation Scheduler</h3>
-            <span className="text-[10px] text-muted-foreground/40">Amy's routines</span>
-          </div>
-          <div className="p-3">
-            <SchedulerPanel />
-          </div>
+          <div className="p-3"><OpsScoreboard /></div>
         </section>
 
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">🏛️</span>
-            <h3 className="text-sm font-semibold text-foreground">Council Chamber</h3>
-            <span className="text-[10px] text-muted-foreground/40">Multi-model decisions</span>
-          </div>
-          <div className="p-3">
-            <CouncilChamber />
-          </div>
-        </section>
-      </div>
-
-      {/* Email Lane + Intelligence Report */}
-      <IntelligencePanel />
-
-      {/* Activity Feed + Task Board */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">⚡</span>
-            <h3 className="text-sm font-semibold text-foreground">Activity Stream</h3>
-            <span className="text-[10px] text-muted-foreground/40">Live from Amy engines</span>
-          </div>
-          <div className="h-[400px]">
-            <ActivityFeed />
-          </div>
+        <section className="rounded-xl border border-border bg-card overflow-hidden mt-4">
+          <div className="p-3"><MissionStatus /></div>
         </section>
 
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">📋</span>
-            <h3 className="text-sm font-semibold text-foreground">Task Queue</h3>
-            <span className="text-[10px] text-muted-foreground/40">Command & Control</span>
-          </div>
-          <div className="h-[400px]">
-            <TaskBoard />
-          </div>
-        </section>
-      </div>
-
-      {/* Approval Gate + Notifications */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">🔐</span>
-            <h3 className="text-sm font-semibold text-foreground">Approval Gate</h3>
-            <span className="text-[10px] text-muted-foreground/40">Human-in-the-loop</span>
-          </div>
-          <div className="h-[320px]">
-            <ApprovalGate />
-          </div>
+        <section className="rounded-xl border border-border bg-card overflow-hidden mt-4">
+          <div className="p-3"><ActivityHeatmap /></div>
         </section>
 
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
+        <section className="rounded-xl border border-border bg-card overflow-hidden mt-4">
           <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">🔔</span>
-            <h3 className="text-sm font-semibold text-foreground">Notifications</h3>
-            <span className="text-[10px] text-muted-foreground/40">Alerts & reports</span>
+            <span className="text-sm">📈</span>
+            <h3 className="text-sm font-semibold text-foreground">Session Analytics</h3>
           </div>
-          <div className="h-[320px]">
-            <NotificationHistory />
-          </div>
+          <div className="p-3"><SessionAnalytics /></div>
         </section>
-      </div>
 
-      {/* Knowledge Manager + Vault Search */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">📊</span>
+              <h3 className="text-sm font-semibold text-foreground">Capability Matrix</h3>
+            </div>
+            <div className="p-3"><CapabilityMatrix /></div>
+          </section>
+
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">⚠️</span>
+              <h3 className="text-sm font-semibold text-foreground">Error Tracker</h3>
+            </div>
+            <div className="p-3"><ErrorTracker /></div>
+          </section>
+        </div>
+      </DashboardZone>
+
+      {/* Zone: Safety & Audit */}
+      <DashboardZone
+        id="zone-safety"
+        icon="🛡️"
+        title="Safety & Governance"
+        description="Safety guardrails, audit trail, decision log, notifications, and ClawBytes recipes"
+        panelCount={5}
+      >
+        <section className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="p-3"><SafetyRails /></div>
+        </section>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">🛡️</span>
+              <h3 className="text-sm font-semibold text-foreground">Audit Trail</h3>
+              <span className="text-[10px] text-muted-foreground/40">Governance events</span>
+            </div>
+            <div className="p-3"><AuditTrail /></div>
+          </section>
+
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">📖</span>
+              <h3 className="text-sm font-semibold text-foreground">Decision Log</h3>
+              <span className="text-[10px] text-muted-foreground/40">Architecture decisions</span>
+            </div>
+            <div className="p-3"><DecisionLog /></div>
+          </section>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">🔔</span>
+              <h3 className="text-sm font-semibold text-foreground">Notifications</h3>
+            </div>
+            <div className="h-[320px]"><NotificationHistory /></div>
+          </section>
+
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="p-3"><ClawBytesRecipes /></div>
+          </section>
+        </div>
+      </DashboardZone>
+
+      {/* Zone: Knowledge */}
       <div id="section-knowledge" />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">📚</span>
-            <h3 className="text-sm font-semibold text-foreground">Knowledge Vault</h3>
-            <span className="text-[10px] text-muted-foreground/40">Browse & ingest</span>
-          </div>
-          <div className="p-3">
-            <KnowledgeManager />
-          </div>
-        </section>
+      <DashboardZone
+        id="zone-knowledge"
+        icon="🧠"
+        title="Knowledge & Intelligence"
+        description="Knowledge vault, neural search, cognitive routing, and vector embeddings"
+        panelCount={4}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">📚</span>
+              <h3 className="text-sm font-semibold text-foreground">Knowledge Vault</h3>
+              <span className="text-[10px] text-muted-foreground/40">Browse & ingest</span>
+            </div>
+            <div className="p-3"><KnowledgeManager /></div>
+          </section>
 
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">🔮</span>
-            <h3 className="text-sm font-semibold text-foreground">Vault Search</h3>
-            <span className="text-[10px] text-muted-foreground/40">Neural refs & knowledge</span>
-          </div>
-          <div className="p-3">
-            <VaultSearch />
-          </div>
-        </section>
-      </div>
-
-      {/* System Logs (full width) */}
-      <section className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-          <span className="text-sm">📜</span>
-          <h3 className="text-sm font-semibold text-foreground">System Logs</h3>
-          <span className="text-[10px] text-muted-foreground/40">Live tail from Amy engines</span>
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">🔮</span>
+              <h3 className="text-sm font-semibold text-foreground">Vault Search</h3>
+              <span className="text-[10px] text-muted-foreground/40">Neural refs & knowledge</span>
+            </div>
+            <div className="p-3"><VaultSearch /></div>
+          </section>
         </div>
-        <div className="p-3">
-          <LogViewer />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">🔀</span>
+              <h3 className="text-sm font-semibold text-foreground">Neural Router</h3>
+              <span className="text-[10px] text-muted-foreground/40">Cognitive routing decisions</span>
+            </div>
+            <div className="p-3"><NeuralRouteViz /></div>
+          </section>
+
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">⌨️</span>
+              <h3 className="text-sm font-semibold text-foreground">Keyboard Shortcuts</h3>
+            </div>
+            <div className="p-3"><KeyboardShortcuts /></div>
+          </section>
         </div>
-      </section>
+      </DashboardZone>
 
-      {/* Session Analytics */}
-      <section className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-          <span className="text-sm">📈</span>
-          <h3 className="text-sm font-semibold text-foreground">Session Analytics</h3>
-          <span className="text-[10px] text-muted-foreground/40">Live metrics from bridge + proxy</span>
+      {/* Zone: Logs & Debug */}
+      <DashboardZone
+        id="zone-logs"
+        icon="📜"
+        title="Logs & Monitoring"
+        description="System logs, Telegram monitor, cron timeline, and error tracking"
+        panelCount={4}
+      >
+        <section className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+            <span className="text-sm">📜</span>
+            <h3 className="text-sm font-semibold text-foreground">System Logs</h3>
+            <span className="text-[10px] text-muted-foreground/40">Live tail from Amy engines</span>
+          </div>
+          <div className="p-3"><LogViewer /></div>
+        </section>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">✈️</span>
+              <h3 className="text-sm font-semibold text-foreground">Telegram Monitor</h3>
+              <span className="text-[10px] text-muted-foreground/40">Bot sessions + messages</span>
+            </div>
+            <div className="p-3"><TelegramMonitor /></div>
+          </section>
+
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">⏰</span>
+              <h3 className="text-sm font-semibold text-foreground">Cron Timeline</h3>
+            </div>
+            <div className="p-3"><CronTimeline /></div>
+          </section>
         </div>
-        <div className="p-3">
-          <SessionAnalytics />
-        </div>
-      </section>
+      </DashboardZone>
 
-      {/* Capability Matrix + Decision Log */}
-      <div id="section-observability" />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">📊</span>
-            <h3 className="text-sm font-semibold text-foreground">Capability Matrix</h3>
-            <span className="text-[10px] text-muted-foreground/40">Operational maturity</span>
-          </div>
-          <div className="p-3">
-            <CapabilityMatrix />
-          </div>
-        </section>
-
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">📖</span>
-            <h3 className="text-sm font-semibold text-foreground">Decision Log</h3>
-            <span className="text-[10px] text-muted-foreground/40">58 architecture decisions</span>
-          </div>
-          <div className="p-3">
-            <DecisionLog />
-          </div>
-        </section>
-      </div>
-
-      {/* Audit Trail + Telegram Monitor */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">🛡️</span>
-            <h3 className="text-sm font-semibold text-foreground">Audit Trail</h3>
-            <span className="text-[10px] text-muted-foreground/40">Governance events</span>
-          </div>
-          <div className="p-3">
-            <AuditTrail />
-          </div>
-        </section>
-
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">✈️</span>
-            <h3 className="text-sm font-semibold text-foreground">Telegram Monitor</h3>
-            <span className="text-[10px] text-muted-foreground/40">Bot sessions + messages</span>
-          </div>
-          <div className="p-3">
-            <TelegramMonitor />
-          </div>
-        </section>
-      </div>
-
-      {/* Neural Route Viz + Keyboard Shortcuts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">🔀</span>
-            <h3 className="text-sm font-semibold text-foreground">Neural Router</h3>
-            <span className="text-[10px] text-muted-foreground/40">Cognitive routing decisions</span>
-          </div>
-          <div className="p-3">
-            <NeuralRouteViz />
-          </div>
-        </section>
-
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">⌨️</span>
-            <h3 className="text-sm font-semibold text-foreground">Keyboard Shortcuts</h3>
-            <span className="text-[10px] text-muted-foreground/40">Power user reference</span>
-          </div>
-          <div className="p-3">
-            <KeyboardShortcuts />
-          </div>
-        </section>
-      </div>
-
-      {/* Environment + Activity Heatmap */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">🔧</span>
-            <h3 className="text-sm font-semibold text-foreground">Environment</h3>
-            <span className="text-[10px] text-muted-foreground/40">System overview</span>
-          </div>
-          <div className="p-3">
-            <EnvironmentInspector />
-          </div>
-        </section>
-      </div>
-
-      {/* Storage + Model Registry */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">💾</span>
-            <h3 className="text-sm font-semibold text-foreground">Storage</h3>
-            <span className="text-[10px] text-muted-foreground/40">Disk usage breakdown</span>
-          </div>
-          <div className="p-3">
-            <StorageMonitor />
-          </div>
-        </section>
-
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">🤖</span>
-            <h3 className="text-sm font-semibold text-foreground">Model Registry</h3>
-            <span className="text-[10px] text-muted-foreground/40">Ollama AI models</span>
-          </div>
-          <div className="p-3">
-            <ModelRegistry />
-          </div>
-        </section>
-      </div>
-
-      {/* Cron Timeline + Error Tracker */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">⏰</span>
-            <h3 className="text-sm font-semibold text-foreground">Cron Timeline</h3>
-            <span className="text-[10px] text-muted-foreground/40">Scheduler routines</span>
-          </div>
-          <div className="p-3">
-            <CronTimeline />
-          </div>
-        </section>
-
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">⚠️</span>
-            <h3 className="text-sm font-semibold text-foreground">Error Tracker</h3>
-            <span className="text-[10px] text-muted-foreground/40">Cross-log error rates</span>
-          </div>
-          <div className="p-3">
-            <ErrorTracker />
-          </div>
-        </section>
-      </div>
-
-      {/* Git Pulse + Uptime */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">💻</span>
-            <h3 className="text-sm font-semibold text-foreground">Git Pulse</h3>
-            <span className="text-[10px] text-muted-foreground/40">Repository activity</span>
-          </div>
-          <div className="p-3">
-            <GitPulse />
-          </div>
-        </section>
-
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">🟢</span>
-            <h3 className="text-sm font-semibold text-foreground">Uptime Monitor</h3>
-            <span className="text-[10px] text-muted-foreground/40">Service availability</span>
-          </div>
-          <div className="p-3">
-            <UptimeMonitor />
-          </div>
-        </section>
-      </div>
-
-      {/* Performance + Config */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">⚡</span>
-            <h3 className="text-sm font-semibold text-foreground">Performance</h3>
-            <span className="text-[10px] text-muted-foreground/40">API throughput</span>
-          </div>
-          <div className="p-3">
-            <PerformanceMetrics />
-          </div>
-        </section>
-
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">📁</span>
-            <h3 className="text-sm font-semibold text-foreground">Config</h3>
-            <span className="text-[10px] text-muted-foreground/40">Platform configuration</span>
-          </div>
-          <div className="p-3">
-            <ConfigViewer />
-          </div>
-        </section>
-      </div>
-
-      {/* Dependency Map + Network Pulse */}
+      {/* Zone: Infrastructure */}
       <div id="section-infra" />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">🔗</span>
-            <h3 className="text-sm font-semibold text-foreground">Dependency Map</h3>
-            <span className="text-[10px] text-muted-foreground/40">Module imports</span>
-          </div>
-          <div className="p-3">
-            <DependencyMap />
-          </div>
-        </section>
+      <DashboardZone
+        id="zone-infra"
+        icon="🔧"
+        title="Infrastructure"
+        description="Network, storage, models, dependencies, environment, performance, git activity, and uptime"
+        panelCount={11}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">🔗</span>
+              <h3 className="text-sm font-semibold text-foreground">Dependency Map</h3>
+            </div>
+            <div className="p-3"><DependencyMap /></div>
+          </section>
 
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
-            <span className="text-sm">📡</span>
-            <h3 className="text-sm font-semibold text-foreground">Network Pulse</h3>
-            <span className="text-[10px] text-muted-foreground/40">Port scan + latency</span>
-          </div>
-          <div className="p-3">
-            <NetworkPulse />
-          </div>
-        </section>
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">📡</span>
+              <h3 className="text-sm font-semibold text-foreground">Network Pulse</h3>
+              <span className="text-[10px] text-muted-foreground/40">Port scan + latency</span>
+            </div>
+            <div className="p-3"><NetworkPulse /></div>
+          </section>
+        </div>
 
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="p-3">
-            <SafetyRails />
-          </div>
-        </section>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">💾</span>
+              <h3 className="text-sm font-semibold text-foreground">Storage</h3>
+            </div>
+            <div className="p-3"><StorageMonitor /></div>
+          </section>
 
-        <div id="section-governance" />
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="p-3">
-            <CouncilInsights />
-          </div>
-        </section>
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">🤖</span>
+              <h3 className="text-sm font-semibold text-foreground">Model Registry</h3>
+              <span className="text-[10px] text-muted-foreground/40">Ollama AI models</span>
+            </div>
+            <div className="p-3"><ModelRegistry /></div>
+          </section>
+        </div>
 
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="p-3">
-            <ClawBytesRecipes />
-          </div>
-        </section>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">🔧</span>
+              <h3 className="text-sm font-semibold text-foreground">Environment</h3>
+            </div>
+            <div className="p-3"><EnvironmentInspector /></div>
+          </section>
 
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="p-3">
-            <OpsScoreboard />
-          </div>
-        </section>
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">📁</span>
+              <h3 className="text-sm font-semibold text-foreground">Config</h3>
+            </div>
+            <div className="p-3"><ConfigViewer /></div>
+          </section>
+        </div>
 
-        <section className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="p-3">
-            <MissionStatus />
-          </div>
-        </section>
-      </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">⚡</span>
+              <h3 className="text-sm font-semibold text-foreground">Performance</h3>
+            </div>
+            <div className="p-3"><PerformanceMetrics /></div>
+          </section>
+
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">💻</span>
+              <h3 className="text-sm font-semibold text-foreground">Git Pulse</h3>
+            </div>
+            <div className="p-3"><GitPulse /></div>
+          </section>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <section className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border">
+              <span className="text-sm">🟢</span>
+              <h3 className="text-sm font-semibold text-foreground">Uptime Monitor</h3>
+            </div>
+            <div className="p-3"><UptimeMonitor /></div>
+          </section>
+        </div>
+      </DashboardZone>
 
       <EmptyStateLaunchpad
         agentCount={dbStats?.agents.total ?? agents.length}

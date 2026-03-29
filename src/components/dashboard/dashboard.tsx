@@ -56,6 +56,7 @@ import { ActivityHeatmap } from './activity-heatmap'
 import { CouncilInsights } from './council-insights'
 import { SectionNav } from './section-nav'
 import { DashboardZone } from './dashboard-zone'
+import { OpsReportBuilder } from './ops-report-builder'
 import type { DbStats, ClaudeStats, LogLike, DashboardData } from './widget-primitives'
 
 export function Dashboard() {
@@ -410,6 +411,13 @@ export function Dashboard() {
           <p className="text-[11px] text-muted-foreground/60 italic">
             💡 Amy&apos;s brain: health score, active tasks, pending approvals, neural refs. Use the Knowledge Search below to ask Amy anything from her vault.
           </p>
+        </div>
+      </section>
+
+      {/* HERO 7: Ops Report Builder */}
+      <section className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="p-4">
+          <OpsReportBuilder />
         </div>
       </section>
 

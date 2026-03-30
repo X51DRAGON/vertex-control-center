@@ -53,7 +53,7 @@ export function DashboardFooter() {
           <span className="text-border/30">|</span>
 
           {/* Phase */}
-          <span className="text-primary/50">Phase 140</span>
+          <span className="text-primary/50">Phase 141</span>
         </div>
 
         <div className="flex items-center gap-4">

@@ -35,7 +35,16 @@ type CouncilData = {
   verdicts: Record<string, number>
   sources: Record<string, number>
   recent_cases: CaseData[]
+  contradictions: ContradictionData[]
+  contradiction_count: number
   timestamp: string
+}
+
+type ContradictionData = {
+  case_id: string
+  title: string
+  groups: Record<string, string[]>
+  severity: 'high' | 'moderate'
 }
 
 const VOTE_COLORS = {
@@ -105,6 +114,11 @@ export function CouncilInsights() {
             <span className="px-2 py-0.5 rounded-full text-2xs font-mono bg-blue-400/10 text-blue-300 border border-blue-400/20">
               {data.total_deliberations} deliberations
             </span>
+            {data.contradiction_count > 0 && (
+              <span className="px-2 py-0.5 rounded-full text-2xs font-mono bg-red-400/10 text-red-300 border border-red-400/20 animate-pulse">
+                ⚡ {data.contradiction_count} split{data.contradiction_count !== 1 ? 's' : ''}
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -205,10 +219,48 @@ export function CouncilInsights() {
         </div>
       </div>
 
+      {/* Contradiction Box */}
+      {data.contradictions.length > 0 && (
+        <div className="border-t border-border/20 px-5 py-3">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xs">⚡</span>
+            <span className="text-2xs font-semibold text-red-300 uppercase tracking-wider">Contradiction Box</span>
+            <span className="text-2xs text-muted-foreground/50">— advisors disagreed</span>
+          </div>
+          <div className="space-y-2">
+            {data.contradictions.map((c) => (
+              <div key={c.case_id} className={`rounded-lg px-3 py-2 text-[10px] font-mono ${
+                c.severity === 'high'
+                  ? 'bg-red-400/10 border border-red-400/20'
+                  : 'bg-amber-400/8 border border-amber-400/15'
+              }`}>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className={c.severity === 'high' ? 'text-red-400' : 'text-amber-400'}>
+                    {c.severity === 'high' ? '🔴' : '🟡'}
+                  </span>
+                  <span className="text-foreground/70 truncate flex-1">{c.case_id}: {c.title}</span>
+                </div>
+                <div className="flex flex-wrap gap-x-4 gap-y-0.5 ml-5">
+                  {Object.entries(c.groups).map(([vote, names]) => {
+                    const colors = VOTE_COLORS[vote as keyof typeof VOTE_COLORS] || VOTE_COLORS.neutral
+                    return (
+                      <span key={vote} className={`${colors.text}`}>
+                        {vote}: {(names as string[]).join(' + ')}
+                      </span>
+                    )
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Footer */}
       <div className="px-5 py-2 border-t border-border/20 flex items-center justify-between">
         <span className="text-2xs text-muted-foreground">
           🏛️ 4 advisors · 4 AI providers · {data.total_cases} deliberations
+          {data.contradiction_count > 0 && ` · ⚡ ${data.contradiction_count} contradictions`}
         </span>
         <button onClick={fetchData} className="text-2xs text-muted-foreground hover:text-foreground transition-colors">↻</button>
       </div>
